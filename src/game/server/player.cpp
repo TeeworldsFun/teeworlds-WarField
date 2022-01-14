@@ -58,6 +58,22 @@ void CPlayer::HandleTuningParams()
 	m_NextTuningParams = *GameServer()->Tuning();
 }
 
+void CPlayer::UpdateTune()
+{
+	CTuningParams* pTuningParams = &m_NextTuningParams;
+	if(m_IsVehicles)
+	{
+		pTuningParams->m_GroundControlSpeed = 120.0f;
+		pTuningParams->m_GroundJumpImpulse = 0;
+	}
+	else
+	{
+		pTuningParams->m_GroundControlSpeed = 10.0f;
+		pTuningParams->m_GroundJumpImpulse = pTuningParams->m_GroundJumpImpulse;
+		return;
+	}
+}
+
 void CPlayer::Tick()
 {
 #ifdef CONF_DEBUG
@@ -126,6 +142,7 @@ void CPlayer::Tick()
 
 void CPlayer::PostTick()
 {
+	UpdateTune();
 	// update latency value
 	if(m_PlayerFlags&PLAYERFLAG_SCOREBOARD)
 	{

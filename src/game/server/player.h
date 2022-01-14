@@ -16,6 +16,17 @@ public:
 	CPlayer(CGameContext *pGameServer, int ClientID, int Team);
 	~CPlayer();
 
+	bool m_IsVehicles = false;
+	int m_ExitTick;
+
+	bool OnVehicle = false;
+	bool GetVehicles() const { return m_IsVehicles; }
+	void SetVehicles(bool Value) 
+	{
+		m_IsVehicles = Value;
+		m_IsVehicles = Value;
+	}
+	void UpdateTune();
 	void Init(int CID);
 
 	void TryRespawn();

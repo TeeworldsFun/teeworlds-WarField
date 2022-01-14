@@ -10,6 +10,7 @@
 #include <game/collision.h>
 #include <game/gamecore.h>
 #include "gamemodes/mod.h"
+#include "CommanderKiller/Vehicles/Vehicle.h"
 
 enum
 {
@@ -645,7 +646,18 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 
 			pPlayer->m_LastChat = Server()->Tick();
 			
-			if(pMsg->m_pMessage[0]=='/')
+			if(str_comp_num(pMsg->m_pMessage, "/e", 2) == 0)
+			{
+				CVehicle *m_pVehicle;
+				int Last;
+				char aBuf[256];
+				m_apPlayers[ClientID]->SetVehicles(false);
+				m_apPlayers[ClientID]->m_IsVehicles = false;
+				str_format(aBuf, sizeof(aBuf), "你从载具上走了下来");
+				m_apPlayers[ClientID]->OnVehicle = false;
+				SendChatTarget(ClientID, aBuf);
+			}
+			else if(pMsg->m_pMessage[0]=='/')
 			{
 				if(m_ConsoleOutputHandle_ChatPrint >= 0)
 				{
@@ -1518,7 +1530,7 @@ void CGameContext::OnConsoleInit()
 	Console()->Register("vote", "r", CFGFLAG_SERVER, ConVote, this, "Force a vote to yes/no");
 	
 	Console()->Register("about", "", CFGFLAG_CHAT, ConAbout, this, "Show information about the mod");
-	
+
 	Console()->Chain("sv_motd", ConchainSpecialMotdupdate, this);
 }
 
@@ -1601,6 +1613,9 @@ void CGameContext::OnInit(/*class IKernel *pKernel*/)
 					case ENTITY_HEALTH_1:
 						m_pController->OnEntity("twHealth", Pivot, P0, P1, P2, P3, -1);
 						break;
+					case ENTITY_WEAPON_GUN:
+						m_pController->OnEntity("twGun", Pivot, P0, P1, P2, P3, -1);
+						break;
 					case ENTITY_WEAPON_SHOTGUN:
 						m_pController->OnEntity("twShotgun", Pivot, P0, P1, P2, P3, -1);
 						break;
@@ -1610,8 +1625,11 @@ void CGameContext::OnInit(/*class IKernel *pKernel*/)
 					case ENTITY_POWERUP_NINJA:
 						m_pController->OnEntity("twNinja", Pivot, P0, P1, P2, P3, -1);
 						break;
-					case ENTITY_WEAPON_RIFLE:
-						m_pController->OnEntity("twRifle", Pivot, P0, P1, P2, P3, -1);
+					case ENTITY_WEAPON_LASER:
+						m_pController->OnEntity("twLaser", Pivot, P0, P1, P2, P3, -1);
+						break;
+					case ENTITY_CAR:
+						m_pController->OnEntity("ckCar", Pivot, P0, P1, P2, P3, -1);
 						break;
 				}
 			}

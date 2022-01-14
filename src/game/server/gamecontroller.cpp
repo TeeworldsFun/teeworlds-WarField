@@ -8,7 +8,8 @@
 #include "entities/pickup.h"
 #include "gamecontroller.h"
 #include "gamecontext.h"
-
+#include "gameworld.h"
+#include <game/server/CommanderKiller/Vehicles/Vehicle.h>
 
 IGameController::IGameController(class CGameContext *pGameServer)
 {
@@ -134,14 +135,19 @@ bool IGameController::OnEntity(const char* pName, vec2 Pivot, vec2 P0, vec2 P1, 
 
 	if(str_comp(pName, "spawn") == 0)
 		m_aaSpawnPoints[0][m_aNumSpawnPoints[0]++] = Pos;
-	else if(str_comp(pName, "spawnRed") == 0)
+	else if(str_comp(pName, "redSpawn") == 0)
 		m_aaSpawnPoints[1][m_aNumSpawnPoints[1]++] = Pos;
-	else if(str_comp(pName, "spawnBlue") == 0)
+	else if(str_comp(pName, "blueSpawn") == 0)
 		m_aaSpawnPoints[2][m_aNumSpawnPoints[2]++] = Pos;
 	else if(str_comp(pName, "armor") == 0)
 		Type = POWERUP_ARMOR;
 	else if(str_comp(pName, "health") == 0)
 		Type = POWERUP_HEALTH;
+	else if(str_comp(pName, "gun") == 0)
+	{
+		Type = POWERUP_WEAPON;
+		SubType = WEAPON_GUN;
+	}
 	else if(str_comp(pName, "shotgun") == 0)
 	{
 		Type = POWERUP_WEAPON;
@@ -152,15 +158,19 @@ bool IGameController::OnEntity(const char* pName, vec2 Pivot, vec2 P0, vec2 P1, 
 		Type = POWERUP_WEAPON;
 		SubType = WEAPON_GRENADE;
 	}
-	else if(str_comp(pName, "rifle") == 0)
+	else if(str_comp(pName, "laser") == 0)
 	{
 		Type = POWERUP_WEAPON;
-		SubType = WEAPON_RIFLE;
+		SubType = WEAPON_LASER;
 	}
 	else if(str_comp(pName, "ninja") == 0 && g_Config.m_SvPowerups)
 	{
 		Type = POWERUP_NINJA;
 		SubType = WEAPON_NINJA;
+	}
+	else if(str_comp(pName, "car") == 0)
+	{
+		new CVehicle(&GameServer()->m_World, Pos);
 	}
 
 	if(Type != -1)
@@ -367,7 +377,6 @@ void IGameController::OnCharacterSpawn(class CCharacter *pChr)
 
 	// give default weapons
 	pChr->GiveWeapon(WEAPON_HAMMER, -1);
-	pChr->GiveWeapon(WEAPON_GUN, 10);
 }
 
 void IGameController::DoWarmup(int Seconds)

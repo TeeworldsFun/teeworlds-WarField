@@ -57,6 +57,7 @@ class CGameContext : public IGameServer
 	static void ConsoleOutputCallback_Chat(const char *pStr, void *pUser);
 
 	static void ConAbout(IConsole::IResult *pResult, void *pUserData);
+	static void ConExit(IConsole::IResult *pResult, void *pUserData);
 	static void ConTuneParam(IConsole::IResult *pResult, void *pUserData);
 	static void ConTuneReset(IConsole::IResult *pResult, void *pUserData);
 	static void ConTuneDump(IConsole::IResult *pResult, void *pUserData);
@@ -84,8 +85,6 @@ class CGameContext : public IGameServer
 
 	int m_ConsoleOutputHandle_ChatPrint;
 	int m_ConsoleOutput_Target;
-	
-	int m_ZoneHandle_TeeWorlds;
 
 public:
 	IServer *Server() const { return m_pServer; }
@@ -105,6 +104,9 @@ public:
 	IGameController *m_pController;
 	CGameWorld m_World;
 
+	bool DropV();
+
+	int m_ZoneHandle_TeeWorlds;
 	// helper functions
 	class CCharacter *GetPlayerChar(int ClientID);
 

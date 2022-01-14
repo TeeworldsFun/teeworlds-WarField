@@ -16,11 +16,11 @@
 #define GAME_NETVERSION "0.6 626fce9a778df4d4" //the std game version
 static const char GAME_RELEASE_VERSION[8] = {'0', '.', '6', '.', '4', 0};
 
-#define MOD_NAME "MyMod"
+#define MOD_NAME "Commander Killer"
 #define MOD_VERSION "0.1"
-#define MOD_AUTHORS ""
+#define MOD_AUTHORS "Ninecloud && FlowerFell-Sans"
 #define MOD_CREDITS ""
-#define MOD_THANKS ""
-#define MOD_SOURCES ""
+#define MOD_THANKS "Necropotame, BattleField, Teeworlds, DDNet Team, MMORPG Team."
+#define MOD_SOURCES "https://github.com/teeworldsCNFun/teeworlds-CK"
 #endif
 #endif

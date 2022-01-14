@@ -38,6 +38,7 @@ public:
 	void SetWeapon(int W);
 	void HandleWeaponSwitch();
 	void DoWeaponSwitch();
+	void RemoveWeapons();
 
 	void HandleWeapons();
 	void HandleNinja();

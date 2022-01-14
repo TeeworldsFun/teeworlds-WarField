@@ -57,7 +57,7 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 	m_EmoteStop = -1;
 	m_LastAction = -1;
 	m_LastNoAmmoSound = -1;
-	m_ActiveWeapon = WEAPON_GUN;
+	m_ActiveWeapon = WEAPON_HAMMER;
 	m_LastWeapon = WEAPON_HAMMER;
 	m_QueuedWeapon = -1;
 
@@ -110,6 +110,17 @@ bool CCharacter::IsGrounded()
 	return false;
 }
 
+void CCharacter::RemoveWeapons()
+{
+	m_aWeapons[WEAPON_GUN].m_Got = false;
+	m_aWeapons[WEAPON_GUN].m_Ammo = 0;
+	m_aWeapons[WEAPON_LASER].m_Got = false;
+	m_aWeapons[WEAPON_LASER].m_Ammo = 0;
+	m_aWeapons[WEAPON_GRENADE].m_Got = false;
+	m_aWeapons[WEAPON_GRENADE].m_Ammo = 0;
+	m_aWeapons[WEAPON_SHOTGUN].m_Got = false;
+	m_aWeapons[WEAPON_SHOTGUN].m_Ammo = 0;
+}
 
 void CCharacter::HandleNinja()
 {
@@ -251,7 +262,7 @@ void CCharacter::FireWeapon()
 	vec2 Direction = normalize(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY));
 
 	bool FullAuto = false;
-	if(m_ActiveWeapon == WEAPON_GRENADE || m_ActiveWeapon == WEAPON_SHOTGUN || m_ActiveWeapon == WEAPON_RIFLE)
+	if(m_ActiveWeapon == WEAPON_GRENADE || m_ActiveWeapon == WEAPON_SHOTGUN || m_ActiveWeapon == WEAPON_LASER || m_ActiveWeapon == WEAPON_GUN || m_ActiveWeapon == WEAPON_HAMMER)
 		FullAuto = true;
 
 
@@ -370,7 +381,7 @@ void CCharacter::FireWeapon()
 			GameServer()->CreateSound(m_Pos, SOUND_GRENADE_FIRE);
 		} break;
 
-		case WEAPON_RIFLE:
+		case WEAPON_LASER:
 		{
 			new CLaser(GameWorld(), m_Pos, Direction, GameServer()->Tuning()->m_LaserReach, m_pPlayer->GetCID());
 			GameServer()->CreateSound(m_Pos, SOUND_RIFLE_FIRE);
@@ -430,6 +441,10 @@ void CCharacter::HandleWeapons()
 				m_aWeapons[m_ActiveWeapon].m_Ammo = min(m_aWeapons[m_ActiveWeapon].m_Ammo + 1, 10);
 				m_aWeapons[m_ActiveWeapon].m_AmmoRegenStart = -1;
 			}
+		}
+		else if(m_ActiveWeapon == WEAPON_GUN)
+		{
+			m_aWeapons[m_ActiveWeapon].m_AmmoRegenStart = 0;
 		}
 		else
 		{
