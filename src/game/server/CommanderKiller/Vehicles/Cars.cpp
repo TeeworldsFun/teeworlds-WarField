@@ -8,9 +8,9 @@
 #include <engine/shared/config.h>
 
 #include "../../entities/flag.h"
-#include "Vehicle.h"
+#include "Car.h"
 
-CVehicle::CVehicle(CGameWorld *pGameWorld, vec2 Pos)
+CCar::CCar(CGameWorld *pGameWorld, vec2 Pos)
 : CEntity(pGameWorld, CGameWorld::ENTTYPE_PICKUP)
 {
 	m_StartPos = Pos;
@@ -48,11 +48,11 @@ CVehicle::CVehicle(CGameWorld *pGameWorld, vec2 Pos)
 	GameWorld()->InsertEntity(this);
 }
 
-void CVehicle::Reset()
+void CCar::Reset()
 {
-    if(m_pVehicle && m_pVehicle->IsAlive())
-        m_pVehicle->GetPlayer()->SetVehicles(false);
-	m_pVehicle = NULL;
+    if(m_pCar && m_pCar->IsAlive())
+        m_pCar->GetPlayer()->SetCars(false);
+	m_pCar = NULL;
 	
 	m_Pos = m_StartPos;
 	m_IsDropped = false;
@@ -61,7 +61,7 @@ void CVehicle::Reset()
     m_ExitTick = 0;
 }
 
-void CVehicle::SearchChar()
+void CCar::SearchChar()
 {
     if(m_ExitTick)
         return;
@@ -76,34 +76,37 @@ void CVehicle::SearchChar()
         if(distance(m_Pos, pClosest->m_Pos) > 64)
             continue;
 
-        if(pClosest->GetPlayer()->GetVehicles())
+        if(pClosest->GetPlayer()->GetCars())
             continue;
 
-        m_pVehicle = GameServer()->GetPlayerChar(i);
+        if(pClosest->GetPlayer()->GetTank())
+            continue;
+
+        m_pCar = GameServer()->GetPlayerChar(i);
         m_IsTaken = true;
         m_DropTick = 0;
         m_IsDropped = false;
-        m_pVehicle->GetPlayer()->SetVehicles(true);
-        m_pVehicle->GetPlayer()->OnVehicle = true;
+        m_pCar->GetPlayer()->SetCars(true);
+        m_pCar->GetPlayer()->OnCar = true;
         m_ExitTick = 200;
         break;
     }
 }
 
-void CVehicle::Tick()
+void CCar::Tick()
 {
 
     if(m_ExitTick)
         m_ExitTick--;
 
-    if(!m_pVehicle || !m_pVehicle->IsAlive() || !m_pVehicle->GetPlayer()->OnVehicle)
+    if(!m_pCar || !m_pCar->IsAlive() || !m_pCar->GetPlayer()->OnCar)
     {
         if(m_IsTaken)
         {
             m_DropTick = Server()->Tick() + Server()->TickSpeed() * 20;
             m_IsTaken = false;
             m_IsDropped = true;
-            m_pVehicle = NULL;
+            m_pCar = NULL;
             m_Vel = vec2(0, 0);
         }
     }
@@ -117,15 +120,15 @@ void CVehicle::Tick()
             Reset();
     }
 
-    if(m_pVehicle && m_pVehicle->IsAlive())
+    if(m_pCar && m_pCar->IsAlive())
     {
-        m_Pos = m_pVehicle->m_Pos + vec2(0, 0);
+        m_Pos = m_pCar->m_Pos + vec2(0, 0);
         if(GameServer()->Collision()->CheckPoint(m_Pos))
-            m_Pos = m_pVehicle->m_Pos + vec2(0, 0);
+            m_Pos = m_pCar->m_Pos + vec2(0, 0);
         if(GameServer()->Collision()->CheckPoint(m_Pos))
-            m_Pos = m_pVehicle->m_Pos;
+            m_Pos = m_pCar->m_Pos;
 
-        m_pVehicle->GetPlayer()->OnVehicle = true;
+        m_pCar->GetPlayer()->OnCar = true;
     }
 
     if(!m_IsTaken)
@@ -141,12 +144,12 @@ void CVehicle::Tick()
 	}
 }
 
-void CVehicle::GiveEvent()
+void CCar::GiveEvent()
 {
 
 }
 
-bool CVehicle::TestBox(vec2 Pos, vec2 Size)
+bool CCar::TestBox(vec2 Pos, vec2 Size)
 {
 	Size *= 0.5f;
 	if(GameServer()->Collision()->CheckPoint(Pos.x-Size.x, Pos.y+Size.y))
@@ -156,7 +159,7 @@ bool CVehicle::TestBox(vec2 Pos, vec2 Size)
 	return false;
 }
 
-void CVehicle::MoveBox(vec2 *pInoutPos, vec2 *pInoutVel, vec2 Size, float Elasticity)
+void CCar::MoveBox(vec2 *pInoutPos, vec2 *pInoutVel, vec2 Size, float Elasticity)
 {
 	// do the move
 	vec2 Pos = *pInoutPos;
@@ -214,7 +217,7 @@ void CVehicle::MoveBox(vec2 *pInoutPos, vec2 *pInoutVel, vec2 Size, float Elasti
 	*pInoutVel = Vel;
 }
 
-void CVehicle::Snap(int SnappingClient)
+void CCar::Snap(int SnappingClient)
 {
     vec2 SIZE = vec2(m_Pos.x, m_Pos.y + 32);
     CNetObj_Pickup *pObj = static_cast<CNetObj_Pickup *>(Server()->SnapNewItem(NETOBJTYPE_PICKUP, m_ID, sizeof(CNetObj_Pickup)));

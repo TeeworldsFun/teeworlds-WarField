@@ -16,15 +16,22 @@ public:
 	CPlayer(CGameContext *pGameServer, int ClientID, int Team);
 	~CPlayer();
 
-	bool m_IsVehicles = false;
+	bool m_IsCars = false;
+	bool m_IsTank = false;
 	int m_ExitTick;
 
-	bool OnVehicle = false;
-	bool GetVehicles() const { return m_IsVehicles; }
-	void SetVehicles(bool Value) 
+	bool OnTank = false;
+	bool GetTank() const { return m_IsTank; }
+	void SetTank(bool Value) 
 	{
-		m_IsVehicles = Value;
-		m_IsVehicles = Value;
+		m_IsTank = Value;
+	}
+	
+	bool OnCar = false;
+	bool GetCars() const { return m_IsCars; }
+	void SetCars(bool Value) 
+	{
+		m_IsCars = Value;
 	}
 	void UpdateTune();
 	void Init(int CID);

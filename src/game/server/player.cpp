@@ -22,6 +22,8 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team)
 	m_SpectatorID = SPEC_FREEVIEW;
 	m_LastActionTick = Server()->Tick();
 	m_TeamChangeTick = Server()->Tick();
+	OnCar = false;
+	OnTank = false;
 
 	m_PrevTuningParams = *pGameServer->Tuning();
 	m_NextTuningParams = m_PrevTuningParams;
@@ -63,19 +65,21 @@ void CPlayer::UpdateTune()
 {
 	CCharacterCore *m_Core;
 	CTuningParams* pTuningParams = &m_NextTuningParams;
-	if(m_IsVehicles)
+	if(m_IsCars)
 	{
-		pTuningParams->m_GroundControlSpeed = 120.0f;
+		pTuningParams->m_GroundControlSpeed = 40.0f;
 		pTuningParams->m_AirControlSpeed = 0.0f;
-		pTuningParams->m_GroundJumpImpulse = 0.0f;
+		pTuningParams->m_GroundJumpImpulse = 7.0f;
 		pTuningParams->m_AirJumpImpulse = 0.0f;
-		pTuningParams->m_HookLength = 10000.0f;
-		m_Core->m_Jumped = 0;
+		pTuningParams->m_HookLength = 200.0f;
+		//m_Core->m_Jumped = 0;
 	}
-	else
+	else if(m_IsTank)
 	{
-		pTuningParams->m_GroundControlSpeed = 10.0f;
-		pTuningParams->m_GroundJumpImpulse = pTuningParams->m_GroundJumpImpulse;
+		pTuningParams->m_GroundControlSpeed = 4.0f;
+		pTuningParams->m_HookLength = 0.0f;
+		pTuningParams->m_Gravity = 0.7f;
+		pTuningParams->m_GroundJumpImpulse = 7.0f;
 		return;
 	}
 }
@@ -87,7 +91,9 @@ void CPlayer::Tick()
 #endif
 	if(!Server()->ClientIngame(m_ClientID))
 		return;
-
+	char aBuf[64];
+	str_format(aBuf, sizeof(aBuf), "Tank: %d, Car: %d", GetTank(), GetCars());
+	GameServer()->SendBroadcast(aBuf, -1);
 	Server()->SetClientScore(m_ClientID, m_Score);
 
 	// do latency stuff

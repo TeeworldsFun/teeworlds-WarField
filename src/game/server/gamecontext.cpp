@@ -10,7 +10,8 @@
 #include <game/collision.h>
 #include <game/gamecore.h>
 #include "gamemodes/mod.h"
-#include "CommanderKiller/Vehicles/Vehicle.h"
+#include "CommanderKiller/Vehicles/Car.h"
+#include "CommanderKiller/Vehicles/Tank.h"
 
 enum
 {
@@ -647,14 +648,22 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			pPlayer->m_LastChat = Server()->Tick();
 			
 			if(str_comp_num(pMsg->m_pMessage, "/e", 2) == 0)
-			{
-				CVehicle *m_pVehicle;
+			{	
+				if(!m_apPlayers[ClientID]->m_IsTank && !m_apPlayers[ClientID]->m_IsCars)
+				{
+					SendChatTarget(ClientID, "?");
+					return;
+				}
+				CCar *m_pCar;
 				int Last;
 				char aBuf[256];
-				m_apPlayers[ClientID]->SetVehicles(false);
-				m_apPlayers[ClientID]->m_IsVehicles = false;
+				m_apPlayers[ClientID]->SetCars(false);
+				m_apPlayers[ClientID]->SetTank(false);
+				m_apPlayers[ClientID]->m_IsTank = false;
+				m_apPlayers[ClientID]->m_IsCars = false;
 				str_format(aBuf, sizeof(aBuf), "你从载具上走了下来");
-				m_apPlayers[ClientID]->OnVehicle = false;
+				m_apPlayers[ClientID]->OnCar = false;
+				m_apPlayers[ClientID]->OnTank = false;
 				SendChatTarget(ClientID, aBuf);
 			}
 			else if(pMsg->m_pMessage[0]=='/')

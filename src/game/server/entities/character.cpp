@@ -561,7 +561,7 @@ void CCharacter::ResetInput()
 
 void CCharacter::Tick()
 {
-	if(m_pPlayer->OnVehicle && m_aWeapons[WEAPON_CARGUN].m_Got == false && m_pPlayer)
+	if(m_pPlayer->OnCar && m_aWeapons[WEAPON_CARGUN].m_Got == false && m_pPlayer)
 	{
 		GiveWeapon(WEAPON_CARGUN, -1);
 		RemoveWeapons();
@@ -569,12 +569,12 @@ void CCharacter::Tick()
 		m_ActiveWeapon = WEAPON_CARGUN;
 		GiveWeapon(WEAPON_CARGUN, -1);
 	}
-	else if(!m_pPlayer->OnVehicle && m_aWeapons[WEAPON_CARGUN].m_Got && m_pPlayer)
+	else if(!m_pPlayer->OnCar && m_aWeapons[WEAPON_CARGUN].m_Got && m_pPlayer)
 	{
 		RemoveWeapons();
 		m_ActiveWeapon = WEAPON_HAMMER;
 	}
-	if(m_pPlayer->OnVehicle && m_aWeapons[WEAPON_CARGUN].m_Ammo <= 1 && m_pPlayer)
+	if(m_pPlayer->OnCar && m_aWeapons[WEAPON_CARGUN].m_Ammo <= 1 && m_pPlayer)
 	{
 		m_aWeapons[WEAPON_CARGUN].m_Ammo == 99999999;
 	}
@@ -737,6 +737,11 @@ void CCharacter::Die(int Killer, int Weapon)
 	m_pPlayer->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()/2;
 	int ModeSpecial = GameServer()->m_pController->OnCharacterDeath(this, GameServer()->m_apPlayers[Killer], Weapon);
 
+	m_pPlayer->m_IsCars = false;
+	m_pPlayer->m_IsTank = false;
+	m_pPlayer->OnTank = false;
+	m_pPlayer->OnCar = false;
+	
 	char aBuf[256];
 	str_format(aBuf, sizeof(aBuf), "kill killer='%d:%s' victim='%d:%s' weapon=%d special=%d",
 		Killer, Server()->ClientName(Killer),

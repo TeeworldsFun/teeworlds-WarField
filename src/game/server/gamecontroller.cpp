@@ -9,7 +9,8 @@
 #include "gamecontroller.h"
 #include "gamecontext.h"
 #include "gameworld.h"
-#include <game/server/CommanderKiller/Vehicles/Vehicle.h>
+#include <game/server/CommanderKiller/Vehicles/Car.h>
+#include <game/server/CommanderKiller/Vehicles/Tank.h>
 
 IGameController::IGameController(class CGameContext *pGameServer)
 {
@@ -175,11 +176,11 @@ bool IGameController::OnEntity(const char* pName, vec2 Pivot, vec2 P0, vec2 P1, 
 	}
 	else if(str_comp(pName, "car") == 0)
 	{
-		new CVehicle(&GameServer()->m_World, Pos);
+		new CCar(&GameServer()->m_World, Pos);
 	}
 	else if(str_comp(pName, "tank") == 0)
 	{
-		new CVehicle(&GameServer()->m_World, Pos);
+		new CTank(&GameServer()->m_World, Pos);
 	}
 
 	if(Type != -1)

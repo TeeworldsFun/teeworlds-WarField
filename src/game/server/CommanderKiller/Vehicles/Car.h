@@ -3,13 +3,13 @@
 /* If you are missing that file, acquire a complete release at https://www.teeworlds.com/forum/viewtopic.php?pid=106707  */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef GAME_SERVER_ENTITIES_HEARTBOX_H
-#define GAME_SERVER_ENTITIES_HEARTBOX_H
+#ifndef GAME_SERVER_CK_CAR_H
+#define GAME_SERVER_CK_CAR_H
 
-class CVehicle : public CEntity
+class CCar : public CEntity
 {
 public:
-	CVehicle(CGameWorld *pGameWorld, vec2 Pos);
+	CCar(CGameWorld *pGameWorld, vec2 Pos);
 
 	int m_ExitTick;
 	void Reset();
@@ -21,7 +21,7 @@ public:
 	void MoveBox(vec2* pInoutPos, vec2* pInoutVel, vec2 Size, float Elasticity);
 
 private:
-	CCharacter* m_pVehicle;
+	CCharacter* m_pCar;
     CPlayer* m_pPlayer;
 	bool m_IsDropped;
 	bool m_IsTaken;
