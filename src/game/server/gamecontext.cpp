@@ -1473,22 +1473,22 @@ void CGameContext::ConAbout(IConsole::IResult *pResult, void *pUserData)
 	CGameContext* pThis = (CGameContext*) pUserData;
 	
 	char aBuf[256];
-	str_format(aBuf, sizeof(aBuf), "%s %s by %s", MOD_NAME, MOD_VERSION, MOD_AUTHORS);
+	str_format(aBuf, sizeof(aBuf), "%s %s 作者： %s", MOD_NAME, MOD_VERSION, MOD_AUTHORS);
 	pThis->Console()->Print(IConsole::OUTPUT_LEVEL_CHAT, "chat", aBuf);
 	
 	if(MOD_CREDITS[0])
 	{
-		str_format(aBuf, sizeof(aBuf), "Credits: %s", MOD_CREDITS);
+		str_format(aBuf, sizeof(aBuf), "想法：%s", MOD_CREDITS);
 		pThis->Console()->Print(IConsole::OUTPUT_LEVEL_CHAT, "chat", aBuf);
 	}
 	if(MOD_THANKS[0])
 	{
-		str_format(aBuf, sizeof(aBuf), "Thanks to: %s", MOD_THANKS);
+		str_format(aBuf, sizeof(aBuf), "感谢：%s", MOD_THANKS);
 		pThis->Console()->Print(IConsole::OUTPUT_LEVEL_CHAT, "chat", aBuf);
 	}
 	if(MOD_SOURCES[0])
 	{
-		str_format(aBuf, sizeof(aBuf), "Sources: %s", MOD_SOURCES);
+		str_format(aBuf, sizeof(aBuf), "源码：%s", MOD_SOURCES);
 		pThis->Console()->Print(IConsole::OUTPUT_LEVEL_CHAT, "chat", aBuf);
 	}
 }
@@ -1552,6 +1552,7 @@ void CGameContext::OnInit(/*class IKernel *pKernel*/)
 
 	//Get zones
 	m_ZoneHandle_TeeWorlds = m_Collision.GetZoneHandle("teeworlds");
+	m_ZoneHandle_CK = m_Collision.GetZoneHandle("ck");
 
 	// reset everything here
 	//world = new GAMEWORLD;
@@ -1613,6 +1614,9 @@ void CGameContext::OnInit(/*class IKernel *pKernel*/)
 					case ENTITY_HEALTH_1:
 						m_pController->OnEntity("twHealth", Pivot, P0, P1, P2, P3, -1);
 						break;
+					case ENTITY_WEAPON_HAMMER:
+						m_pController->OnEntity("twHammer", Pivot, P0, P1, P2, P3, -1);
+						break;
 					case ENTITY_WEAPON_GUN:
 						m_pController->OnEntity("twGun", Pivot, P0, P1, P2, P3, -1);
 						break;
@@ -1628,8 +1632,17 @@ void CGameContext::OnInit(/*class IKernel *pKernel*/)
 					case ENTITY_WEAPON_LASER:
 						m_pController->OnEntity("twLaser", Pivot, P0, P1, P2, P3, -1);
 						break;
-					case ENTITY_CAR:
+					case CK_V_CARGUN:
+						m_pController->OnEntity("ckCarGun", Pivot, P0, P1, P2, P3, -1);
+						break;
+					case CK_V_CAR:
 						m_pController->OnEntity("ckCar", Pivot, P0, P1, P2, P3, -1);
+						break;
+					case CK_V_TANK:
+						m_pController->OnEntity("ckTank", Pivot, P0, P1, P2, P3, -1);
+						break;
+					case CK_V_HELICOPTER:
+						m_pController->OnEntity("ckHelicopter", Pivot, P0, P1, P2, P3, -1);
 						break;
 				}
 			}

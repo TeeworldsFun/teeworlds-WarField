@@ -26,6 +26,7 @@
 #include <engine/shared/snapshot.h>
 
 #include <mastersrv/mastersrv.h>
+#include <game/version.h>
 
 #include "register.h"
 #include "server.h"
@@ -1162,7 +1163,7 @@ void CServer::SendServerInfo(const NETADDR *pAddr, int Token, bool Extended, int
 	// gametype
 	if(MaxClients > VANILLA_MAX_CLIENTS)
 	{
-		str_format(aBuf, sizeof(aBuf), "%s%d", GameServer()->GameType(), 64);
+		str_format(aBuf, sizeof(aBuf), "%s", GameServer()->GameType());
 		p.AddString(aBuf, 16);
 	}
 	else

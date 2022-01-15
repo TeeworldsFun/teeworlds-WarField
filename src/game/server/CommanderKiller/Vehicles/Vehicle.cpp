@@ -17,29 +17,28 @@ CVehicle::CVehicle(CGameWorld *pGameWorld, vec2 Pos)
 
     for(int i = 0; i < 5; i++)
     {
-        const int SIZE = 32;
         m_aIDs[i] = Server()->SnapNewID();
         switch(i)
         {
         case 0:
-            m_aFrom[i] = vec2(-SIZE, -SIZE);
-            m_aTo[i] = vec2(SIZE, -SIZE);
+            m_aFrom[i] = vec2(-64, -64);
+            m_aTo[i] = vec2(+96, +64);
             break;
         case 1:
-            m_aFrom[i] = vec2(SIZE, -SIZE);
-            m_aTo[i] = vec2(SIZE, SIZE);
+            m_aFrom[i] = vec2(+96, +64);
+            m_aTo[i] = vec2(-96, +64);
             break;
         case 2:
-            m_aFrom[i] = vec2(SIZE, SIZE);
-            m_aTo[i] = vec2(-SIZE, SIZE);
+            m_aFrom[i] = vec2(-96, +64);
+            m_aTo[i] = vec2(+64, -64);
             break;
         case 3:
-            m_aFrom[i] = vec2(-SIZE, SIZE);
-            m_aTo[i] = vec2(-SIZE, -SIZE);
+            m_aFrom[i] = vec2(+64, -64);
+            m_aTo[i] = vec2(-64, -64);
             break;
         case 4:
-            m_aFrom[i] = vec2(-SIZE, -SIZE);
-            m_aTo[i] = vec2(-SIZE, -SIZE);
+            m_aFrom[i] = vec2(0, -64);
+            m_aTo[i] = vec2(0, 64);
             break;
         }
     }
@@ -59,10 +58,14 @@ void CVehicle::Reset()
 	m_IsDropped = false;
 	m_IsTaken = false;
 	m_DropTick = 0;
+    m_ExitTick = 0;
 }
 
 void CVehicle::SearchChar()
 {
+    if(m_ExitTick)
+        return;
+
     for(int i = 0; i < MAX_CLIENTS; i++)
     {
         CCharacter* pClosest = GameServer()->GetPlayerChar(i);
@@ -76,23 +79,24 @@ void CVehicle::SearchChar()
         if(pClosest->GetPlayer()->GetVehicles())
             continue;
 
-        if(pClosest->GetPlayer()->m_ExitTick != 0)
-        {
-            continue;
-        }
-
         m_pVehicle = GameServer()->GetPlayerChar(i);
         m_IsTaken = true;
         m_DropTick = 0;
         m_IsDropped = false;
         m_pVehicle->GetPlayer()->SetVehicles(true);
+        m_pVehicle->GetPlayer()->OnVehicle = true;
+        m_ExitTick = 200;
         break;
     }
 }
 
 void CVehicle::Tick()
 {
-    if(!m_pVehicle || !m_pVehicle->IsAlive())
+
+    if(m_ExitTick)
+        m_ExitTick--;
+
+    if(!m_pVehicle || !m_pVehicle->IsAlive() || !m_pVehicle->GetPlayer()->OnVehicle)
     {
         if(m_IsTaken)
         {
@@ -120,6 +124,8 @@ void CVehicle::Tick()
             m_Pos = m_pVehicle->m_Pos + vec2(0, 0);
         if(GameServer()->Collision()->CheckPoint(m_Pos))
             m_Pos = m_pVehicle->m_Pos;
+
+        m_pVehicle->GetPlayer()->OnVehicle = true;
     }
 
     if(!m_IsTaken)
@@ -210,12 +216,13 @@ void CVehicle::MoveBox(vec2 *pInoutPos, vec2 *pInoutVel, vec2 Size, float Elasti
 
 void CVehicle::Snap(int SnappingClient)
 {
+    vec2 SIZE = vec2(m_Pos.x, m_Pos.y + 32);
     CNetObj_Pickup *pObj = static_cast<CNetObj_Pickup *>(Server()->SnapNewItem(NETOBJTYPE_PICKUP, m_ID, sizeof(CNetObj_Pickup)));
 	if(!pObj)
 		return;
 
 	pObj->m_X = (int)m_Pos.x;
-	pObj->m_Y = (int)m_Pos.y;
+	pObj->m_Y = (int)m_Pos.y-20;
 	pObj->m_Type = POWERUP_HEALTH;
 
 	CNetObj_Laser *pLaser[5];

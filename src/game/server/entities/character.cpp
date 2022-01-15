@@ -120,6 +120,8 @@ void CCharacter::RemoveWeapons()
 	m_aWeapons[WEAPON_GRENADE].m_Ammo = 0;
 	m_aWeapons[WEAPON_SHOTGUN].m_Got = false;
 	m_aWeapons[WEAPON_SHOTGUN].m_Ammo = 0;
+	m_aWeapons[WEAPON_CARGUN].m_Got = false;
+	m_aWeapons[WEAPON_CARGUN].m_Ammo = 0;
 }
 
 void CCharacter::HandleNinja()
@@ -262,7 +264,7 @@ void CCharacter::FireWeapon()
 	vec2 Direction = normalize(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY));
 
 	bool FullAuto = false;
-	if(m_ActiveWeapon == WEAPON_GRENADE || m_ActiveWeapon == WEAPON_SHOTGUN || m_ActiveWeapon == WEAPON_LASER || m_ActiveWeapon == WEAPON_GUN || m_ActiveWeapon == WEAPON_HAMMER)
+	if(m_ActiveWeapon == WEAPON_GRENADE || m_ActiveWeapon == WEAPON_SHOTGUN || m_ActiveWeapon == WEAPON_LASER || m_ActiveWeapon == WEAPON_GUN || m_ActiveWeapon == WEAPON_HAMMER || m_ActiveWeapon == WEAPON_CARGUN)
 		FullAuto = true;
 
 
@@ -399,6 +401,28 @@ void CCharacter::FireWeapon()
 			GameServer()->CreateSound(m_Pos, SOUND_NINJA_FIRE);
 		} break;
 
+		case WEAPON_CARGUN:
+		{
+			int ShotSpread = 1;
+
+			for(int i = -ShotSpread; i <= ShotSpread; ++i)
+			{
+				float Spreading[] = {-0.185f, -0.070f, 0, 0.070f, 0.185f};
+				float a = GetAngle(Direction);
+				a += Spreading[i+2];
+				float v = 1-(absolute(i)/(float)ShotSpread);
+				float Speed = mix((float)GameServer()->Tuning()->m_ShotgunSpeeddiff, 1.0f, v);
+				CProjectile *pProj = new CProjectile(GameWorld(), WEAPON_GUN,
+					m_pPlayer->GetCID(),
+					ProjStartPos,
+					vec2(cosf(a), sinf(a))*Speed,
+					4,
+					0, false, 5, -1, WEAPON_GUN);
+			}
+
+			GameServer()->CreateSound(m_Pos, SOUND_HIT);
+		} break;
+
 	}
 
 	m_AttackTick = Server()->Tick();
@@ -531,6 +555,18 @@ void CCharacter::ResetInput()
 
 void CCharacter::Tick()
 {
+	if(m_pPlayer->OnVehicle && m_aWeapons[WEAPON_CARGUN].m_Got == false && m_pPlayer)
+	{
+		GiveWeapon(WEAPON_CARGUN, -1);
+		RemoveWeapons();
+		m_ActiveWeapon = WEAPON_CARGUN;
+		GiveWeapon(WEAPON_CARGUN, -1);
+	}
+	else if(!m_pPlayer->OnVehicle && m_aWeapons[WEAPON_CARGUN].m_Got && m_pPlayer)
+	{
+		RemoveWeapons();
+		m_ActiveWeapon = WEAPON_HAMMER;
+	}
 	if(m_pPlayer->m_ForceBalanced)
 	{
 		char Buf[128];

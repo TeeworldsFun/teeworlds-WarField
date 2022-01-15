@@ -11,6 +11,7 @@ class CVehicle : public CEntity
 public:
 	CVehicle(CGameWorld *pGameWorld, vec2 Pos);
 
+	int m_ExitTick;
 	void Reset();
 	void Tick();
 	void Snap(int SnappingClient);

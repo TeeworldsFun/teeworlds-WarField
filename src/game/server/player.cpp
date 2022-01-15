@@ -3,6 +3,7 @@
 #include <new>
 #include <engine/shared/config.h>
 #include "player.h"
+#include <game/gamecore.h>
 
 
 MACRO_ALLOC_POOL_ID_IMPL(CPlayer, MAX_CLIENTS)
@@ -60,11 +61,16 @@ void CPlayer::HandleTuningParams()
 
 void CPlayer::UpdateTune()
 {
+	CCharacterCore *m_Core;
 	CTuningParams* pTuningParams = &m_NextTuningParams;
 	if(m_IsVehicles)
 	{
 		pTuningParams->m_GroundControlSpeed = 120.0f;
-		pTuningParams->m_GroundJumpImpulse = 0;
+		pTuningParams->m_AirControlSpeed = 0.0f;
+		pTuningParams->m_GroundJumpImpulse = 0.0f;
+		pTuningParams->m_AirJumpImpulse = 0.0f;
+		pTuningParams->m_HookLength = 10000.0f;
+		m_Core->m_Jumped = 0;
 	}
 	else
 	{

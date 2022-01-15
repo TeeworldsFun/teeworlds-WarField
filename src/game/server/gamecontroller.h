@@ -26,11 +26,7 @@ class IGameController
 
 	class CGameContext *m_pGameServer;
 	class IServer *m_pServer;
-
-protected:
-	CGameContext *GameServer() const { return m_pGameServer; }
-	IServer *Server() const { return m_pServer; }
-
+public:
 	struct CSpawnEval
 	{
 		CSpawnEval()
@@ -45,32 +41,6 @@ protected:
 		int m_FriendlyTeam;
 		float m_Score;
 	};
-
-	float EvaluateSpawnPos(CSpawnEval *pEval, vec2 Pos);
-	void EvaluateSpawnType(CSpawnEval *pEval, int Type);
-	bool EvaluateSpawn(class CPlayer *pP, vec2 *pPos);
-
-	void CycleMap();
-	void ResetGame();
-
-	char m_aMapWish[128];
-
-
-	int m_RoundStartTick;
-	int m_GameOverTick;
-	int m_SuddenDeath;
-
-	int m_aTeamscore[2];
-
-	int m_Warmup;
-	int m_UnpauseTimer;
-	int m_RoundCount;
-
-	int m_GameFlags;
-	int m_UnbalancedTick;
-	bool m_ForceBalanced;
-
-public:
 	const char *m_pGameType;
 
 	bool IsTeamplay() const;
@@ -155,6 +125,35 @@ public:
 	virtual void PostReset();
 
 	double GetTime();
+
+protected:
+	CGameContext *GameServer() const { return m_pGameServer; }
+	IServer *Server() const { return m_pServer; }
+
+	float EvaluateSpawnPos(CSpawnEval *pEval, vec2 Pos);
+	void EvaluateSpawnType(CSpawnEval *pEval, int Type);
+	bool EvaluateSpawn(class CPlayer *pP, vec2 *pPos);
+
+	void CycleMap();
+	void ResetGame();
+
+	char m_aMapWish[128];
+	
+
+	int m_RoundStartTick;
+	int m_GameOverTick;
+	int m_SuddenDeath;
+
+	int m_aTeamscore[2];
+
+	int m_Warmup;
+	int m_UnpauseTimer;
+	int m_RoundCount;
+
+	int m_GameFlags;
+	int m_UnbalancedTick;
+	bool m_ForceBalanced;
+
 };
 
 #endif

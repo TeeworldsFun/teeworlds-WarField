@@ -40,6 +40,7 @@ vec2 CProjectile::GetPos(float Time)
 			Speed = GameServer()->Tuning()->m_GrenadeSpeed;
 			break;
 
+		case WEAPON_CARGUN:
 		case WEAPON_SHOTGUN:
 			Curvature = GameServer()->Tuning()->m_ShotgunCurvature;
 			Speed = GameServer()->Tuning()->m_ShotgunSpeed;

@@ -83,6 +83,9 @@ class CGameContext : public IGameServer
 
 	bool m_Resetting;
 
+public:
+	int m_ZoneHandle_TeeWorlds;
+	int m_ZoneHandle_CK;
 	int m_ConsoleOutputHandle_ChatPrint;
 	int m_ConsoleOutput_Target;
 
@@ -106,7 +109,6 @@ public:
 
 	bool DropV();
 
-	int m_ZoneHandle_TeeWorlds;
 	// helper functions
 	class CCharacter *GetPlayerChar(int ClientID);
 

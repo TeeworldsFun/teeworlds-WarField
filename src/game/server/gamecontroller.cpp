@@ -143,6 +143,11 @@ bool IGameController::OnEntity(const char* pName, vec2 Pivot, vec2 P0, vec2 P1, 
 		Type = POWERUP_ARMOR;
 	else if(str_comp(pName, "health") == 0)
 		Type = POWERUP_HEALTH;
+	else if(str_comp(pName, "hammer") == 0)
+	{
+		Type = POWERUP_WEAPON;
+		SubType = WEAPON_HAMMER;
+	}
 	else if(str_comp(pName, "gun") == 0)
 	{
 		Type = POWERUP_WEAPON;
@@ -169,6 +174,10 @@ bool IGameController::OnEntity(const char* pName, vec2 Pivot, vec2 P0, vec2 P1, 
 		SubType = WEAPON_NINJA;
 	}
 	else if(str_comp(pName, "car") == 0)
+	{
+		new CVehicle(&GameServer()->m_World, Pos);
+	}
+	else if(str_comp(pName, "tank") == 0)
 	{
 		new CVehicle(&GameServer()->m_World, Pos);
 	}

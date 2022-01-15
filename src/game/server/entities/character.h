@@ -21,6 +21,16 @@ class CCharacter : public CEntity
 	MACRO_ALLOC_POOL_ID()
 
 public:
+
+	struct WeaponStat
+	{
+		int m_AmmoRegenStart;
+		int m_Ammo;
+		int m_Ammocost;
+		bool m_Got;
+
+	} m_aWeapons[NUM_WEAPONS];
+
 	//character's size
 	static const int ms_PhysSize = 28;
 
@@ -75,14 +85,6 @@ private:
 	CEntity *m_apHitObjects[10];
 	int m_NumObjectsHit;
 
-	struct WeaponStat
-	{
-		int m_AmmoRegenStart;
-		int m_Ammo;
-		int m_Ammocost;
-		bool m_Got;
-
-	} m_aWeapons[NUM_WEAPONS];
 
 	int m_ActiveWeapon;
 	int m_LastWeapon;
