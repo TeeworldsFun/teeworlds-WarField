@@ -404,7 +404,7 @@ void CCharacter::FireWeapon()
 		case WEAPON_CARGUN:
 		{
 			int ShotSpread = 1;
-
+			m_aWeapons[WEAPON_CARGUN].m_Ammo++;
 			for(int i = -ShotSpread; i <= ShotSpread; ++i)
 			{
 				float Spreading[] = {-0.185f, -0.070f, 0, 0.070f, 0.185f};
@@ -481,7 +481,13 @@ void CCharacter::HandleWeapons()
 
 bool CCharacter::GiveWeapon(int Weapon, int Ammo)
 {
-	if(m_aWeapons[Weapon].m_Ammo < g_pData->m_Weapons.m_aId[Weapon].m_Maxammo || !m_aWeapons[Weapon].m_Got)
+	if(Weapon == WEAPON_CARGUN)
+	{
+		m_aWeapons[Weapon].m_Got = true;
+		m_aWeapons[Weapon].m_Ammo = 9999999999999;
+		return true;
+	}
+	else if(m_aWeapons[Weapon].m_Ammo < g_pData->m_Weapons.m_aId[Weapon].m_Maxammo || !m_aWeapons[Weapon].m_Got)
 	{
 		m_aWeapons[Weapon].m_Got = true;
 		m_aWeapons[Weapon].m_Ammo = min(g_pData->m_Weapons.m_aId[Weapon].m_Maxammo, Ammo);
@@ -559,6 +565,7 @@ void CCharacter::Tick()
 	{
 		GiveWeapon(WEAPON_CARGUN, -1);
 		RemoveWeapons();
+		m_aWeapons[WEAPON_CARGUN].m_Ammo = -1;
 		m_ActiveWeapon = WEAPON_CARGUN;
 		GiveWeapon(WEAPON_CARGUN, -1);
 	}
@@ -566,6 +573,10 @@ void CCharacter::Tick()
 	{
 		RemoveWeapons();
 		m_ActiveWeapon = WEAPON_HAMMER;
+	}
+	if(m_pPlayer->OnVehicle && m_aWeapons[WEAPON_CARGUN].m_Ammo <= 1 && m_pPlayer)
+	{
+		m_aWeapons[WEAPON_CARGUN].m_Ammo == 99999999;
 	}
 	if(m_pPlayer->m_ForceBalanced)
 	{
