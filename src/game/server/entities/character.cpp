@@ -433,7 +433,8 @@ void CCharacter::FireWeapon()
 				Direction,
 				(int)(Server()->TickSpeed()*GameServer()->Tuning()->m_GrenadeLifetime),
 				4, true, 2, SOUND_GRENADE_EXPLODE, WEAPON_GRENADE);
-			CProjectile *pProj = new CProjectile(GameWorld(), WEAPON_GUN,
+
+			CProjectile *pProja = new CProjectile(GameWorld(), WEAPON_GUN,
 				m_pPlayer->GetCID(),
 				ProjStartPos,
 				Direction,
