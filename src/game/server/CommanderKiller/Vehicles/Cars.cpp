@@ -1,8 +1,3 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-/* Copyright � 2013 Neox.                                                                                                */
-/* If you are missing that file, acquire a complete release at https://www.teeworlds.com/forum/viewtopic.php?pid=106707  */
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-// yes, it copy from WarCN64(im make it 64 players, So i CAN COPY IT RIGHT?I CODING SOMETHING OK?)
 #include <game/generated/protocol.h>
 #include <game/server/gamecontext.h>
 #include <engine/shared/config.h>
@@ -21,24 +16,19 @@ CCar::CCar(CGameWorld *pGameWorld, vec2 Pos)
         switch(i)
         {
         case 0:
-            m_aFrom[i] = vec2(-64, -64);
-            m_aTo[i] = vec2(+96, +64);
+            m_aX[i] = 0;
+            m_aY[i] = -50;
+            m_aSubType[i] = POWERUP_HEALTH;
             break;
         case 1:
-            m_aFrom[i] = vec2(+96, +64);
-            m_aTo[i] = vec2(-96, +64);
+            m_aX[i] = +64;
+            m_aY[i] = 0;
+            m_aSubType[i] = POWERUP_HEALTH;
             break;
         case 2:
-            m_aFrom[i] = vec2(-96, +64);
-            m_aTo[i] = vec2(+64, -64);
-            break;
-        case 3:
-            m_aFrom[i] = vec2(+64, -64);
-            m_aTo[i] = vec2(-64, -64);
-            break;
-        case 4:
-            m_aFrom[i] = vec2(0, -64);
-            m_aTo[i] = vec2(0, 64);
+            m_aX[i] = -64;
+            m_aY[i] = 0;
+            m_aSubType[i] = POWERUP_HEALTH;
             break;
         }
     }
@@ -80,7 +70,10 @@ void CCar::SearchChar()
             continue;
 
         if(pClosest->GetPlayer()->GetTank())
-            continue;
+            return;
+
+        if(pClosest->GetPlayer()->GetH())
+            return;
 
         m_pCar = GameServer()->GetPlayerChar(i);
         m_IsTaken = true;
@@ -219,16 +212,21 @@ void CCar::MoveBox(vec2 *pInoutPos, vec2 *pInoutVel, vec2 Size, float Elasticity
 
 void CCar::Snap(int SnappingClient)
 {
-    vec2 SIZE = vec2(m_Pos.x, m_Pos.y + 32);
-    CNetObj_Pickup *pObj = static_cast<CNetObj_Pickup *>(Server()->SnapNewItem(NETOBJTYPE_PICKUP, m_ID, sizeof(CNetObj_Pickup)));
-	if(!pObj)
-		return;
+    CNetObj_Pickup *pObj[5];
 
-	pObj->m_X = (int)m_Pos.x;
-	pObj->m_Y = (int)m_Pos.y-20;
-	pObj->m_Type = POWERUP_HEALTH;
+    for(int i = 0; i < 5; i++)
+    {
+        pObj[i] = static_cast<CNetObj_Pickup *>(Server()->SnapNewItem(NETOBJTYPE_PICKUP, m_aIDs[i], sizeof(CNetObj_Pickup)));
+	    
+        if(!pObj[i])
+    		return;
 
-	CNetObj_Laser *pLaser[5];
+    	pObj[i]->m_X = (int)m_Pos.x + (int)m_aX[i];
+	    pObj[i]->m_Y = (int)m_Pos.y + (int)m_aY[i];
+	    pObj[i]->m_Type = m_aSubType[i];
+
+    }
+	/*CNetObj_Laser *pLaser[5];
 
     for(int i = 0; i < 5; i++)
     {
@@ -242,5 +240,5 @@ void CCar::Snap(int SnappingClient)
         pLaser[i]->m_FromX = (int)m_Pos.x + (int)m_aTo[i].x;
         pLaser[i]->m_FromY = (int)m_Pos.y + (int)m_aTo[i].y;
         pLaser[i]->m_StartTick = Server()->Tick() - 3;
-    }
+    }*/
 }

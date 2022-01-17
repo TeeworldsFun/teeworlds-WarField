@@ -67,6 +67,8 @@ void CPickup::Tick()
 				break;
 
 			case POWERUP_WEAPON:
+				if(pChr->GetPlayer()->OnTank || pChr->GetPlayer()->OnCar)
+					return;
 				if(m_Subtype >= 0 && m_Subtype < NUM_WEAPONS)
 				{
 					if(pChr->GiveWeapon(m_Subtype, 10))

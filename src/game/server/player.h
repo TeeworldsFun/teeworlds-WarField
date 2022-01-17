@@ -16,7 +16,6 @@ public:
 	CPlayer(CGameContext *pGameServer, int ClientID, int Team);
 	~CPlayer();
 
-	bool m_IsCars = false;
 	bool m_IsTank = false;
 	int m_ExitTick;
 
@@ -27,12 +26,22 @@ public:
 		m_IsTank = Value;
 	}
 	
+	bool m_IsCars = false;
 	bool OnCar = false;
 	bool GetCars() const { return m_IsCars; }
 	void SetCars(bool Value) 
 	{
 		m_IsCars = Value;
 	}
+
+	bool m_IsH = false;
+	bool OnH = false;
+	bool GetH() const { return m_IsH; }
+	void SetH(bool Value) 
+	{
+		m_IsH = Value;
+	}
+
 	void UpdateTune();
 	void Init(int CID);
 
@@ -116,6 +125,8 @@ public:
 		int m_Max;
 	} m_Latency;
 
+	void AddGivenDamage(int Damage) {m_GivenDamage += Damage; }
+
 private:
 	CCharacter *m_pCharacter;
 	CGameContext *m_pGameServer;
@@ -128,6 +139,7 @@ private:
 	int m_ClientID;
 	int m_Team;
 
+	int m_GivenDamage;
 private:
 	CTuningParams m_PrevTuningParams;
 	CTuningParams m_NextTuningParams;

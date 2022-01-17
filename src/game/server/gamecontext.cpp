@@ -12,6 +12,7 @@
 #include "gamemodes/mod.h"
 #include "CommanderKiller/Vehicles/Car.h"
 #include "CommanderKiller/Vehicles/Tank.h"
+#include "CommanderKiller/Vehicles/H.h"
 
 enum
 {
@@ -649,7 +650,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			
 			if(str_comp_num(pMsg->m_pMessage, "/e", 2) == 0)
 			{	
-				if(!m_apPlayers[ClientID]->m_IsTank && !m_apPlayers[ClientID]->m_IsCars)
+				if(!m_apPlayers[ClientID]->m_IsTank && !m_apPlayers[ClientID]->m_IsCars && !m_apPlayers[ClientID]->m_IsH)
 				{
 					SendChatTarget(ClientID, "?");
 					return;
@@ -660,10 +661,13 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 				m_apPlayers[ClientID]->SetCars(false);
 				m_apPlayers[ClientID]->SetTank(false);
 				m_apPlayers[ClientID]->m_IsTank = false;
+				m_apPlayers[ClientID]->SetH(false);
+				m_apPlayers[ClientID]->m_IsH = false;
 				m_apPlayers[ClientID]->m_IsCars = false;
 				str_format(aBuf, sizeof(aBuf), "你从载具上走了下来");
 				m_apPlayers[ClientID]->OnCar = false;
 				m_apPlayers[ClientID]->OnTank = false;
+				m_apPlayers[ClientID]->OnH = false;
 				SendChatTarget(ClientID, aBuf);
 			}
 			else if(pMsg->m_pMessage[0]=='/')
@@ -1482,7 +1486,7 @@ void CGameContext::ConAbout(IConsole::IResult *pResult, void *pUserData)
 	CGameContext* pThis = (CGameContext*) pUserData;
 	
 	char aBuf[256];
-	str_format(aBuf, sizeof(aBuf), "%s %s 作者： %s", MOD_NAME, MOD_VERSION, MOD_AUTHORS);
+	str_format(aBuf, sizeof(aBuf), "模式: %s v%s 作者： %s", MOD_NAME, MOD_VERSION, MOD_AUTHORS);
 	pThis->Console()->Print(IConsole::OUTPUT_LEVEL_CHAT, "chat", aBuf);
 	
 	if(MOD_CREDITS[0])
@@ -1612,10 +1616,10 @@ void CGameContext::OnInit(/*class IKernel *pKernel*/)
 						m_pController->OnEntity("twSpawnBlue", Pivot, P0, P1, P2, P3, -1);
 						break;
 					case ENTITY_FLAGSTAND_RED:
-						m_pController->OnEntity("twFlagStandRed", Pivot, P0, P1, P2, P3, -1);
+						m_pController->OnEntity("twRedFlag", Pivot, P0, P1, P2, P3, -1);
 						break;
 					case ENTITY_FLAGSTAND_BLUE:
-						m_pController->OnEntity("twFlagStandBlue", Pivot, P0, P1, P2, P3, -1);
+						m_pController->OnEntity("twBlueFlag", Pivot, P0, P1, P2, P3, -1);
 						break;
 					case ENTITY_ARMOR_1:
 						m_pController->OnEntity("twArmor", Pivot, P0, P1, P2, P3, -1);

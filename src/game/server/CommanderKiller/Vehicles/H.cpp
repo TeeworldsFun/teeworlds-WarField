@@ -3,47 +3,37 @@
 #include <engine/shared/config.h>
 
 #include "../../entities/flag.h"
-#include "Tank.h"
+#include "H.h"
 
-CTank::CTank(CGameWorld *pGameWorld, vec2 Pos)
+CH::CH(CGameWorld *pGameWorld, vec2 Pos)
 : CEntity(pGameWorld, CGameWorld::ENTTYPE_PICKUP)
 {
 	m_StartPos = Pos;
 
-    for(int i = 0; i < 6; i++)
+    for(int i = 0; i < 5; i++)
     {
         m_aIDs[i] = Server()->SnapNewID();
         switch(i)
         {
         case 0:
-            m_aX[i] = 0;
-            m_aY[i] = -46;
-            m_aSubType[i] = POWERUP_ARMOR;
+            m_aX[i] = -16;
+            m_aY[i] = 0;
+            m_aSubType[i] = POWERUP_HEALTH;
             break;
         case 1:
-            m_aX[i] = -32;
-            m_aY[i] = -32;
+            m_aX[i] = +16;
+            m_aY[i] = 0;
             m_aSubType[i] = POWERUP_HEALTH;
             break;
         case 2:
-            m_aX[i] = -64;
-            m_aY[i] = 0;
+            m_aX[i] = 0;
+            m_aY[i] = -16;
             m_aSubType[i] = POWERUP_HEALTH;
             break;
         case 3:
-            m_aX[i] = 32;
-            m_aY[i] = -32;
-            m_aSubType[i] = POWERUP_HEALTH;
-            break;
-        case 4:
-            m_aX[i] = 64;
+            m_aX[i] = -64;
             m_aY[i] = 0;
             m_aSubType[i] = POWERUP_HEALTH;
-            break;
-        case 5:
-            m_aX[i] = 0;
-            m_aY[i] = 0;
-            m_aSubType[i] = POWERUP_ARMOR;
             break;
         }
     }
@@ -53,11 +43,11 @@ CTank::CTank(CGameWorld *pGameWorld, vec2 Pos)
 	GameWorld()->InsertEntity(this);
 }
 
-void CTank::Reset()
+void CH::Reset()
 {
-    if(m_pTank && m_pTank->IsAlive())
-        m_pTank->GetPlayer()->SetTank(false);
-	m_pTank = NULL;
+    if(m_pH && m_pH->IsAlive())
+        m_pH->GetPlayer()->SetH(false);
+	m_pH = NULL;
 	
 	m_Pos = m_StartPos;
 	m_IsDropped = false;
@@ -66,7 +56,7 @@ void CTank::Reset()
     m_ExitTick = 0;
 }
 
-void CTank::SearchChar()
+void CH::SearchChar()
 {
     if(m_ExitTick)
         return;
@@ -81,40 +71,40 @@ void CTank::SearchChar()
         if(distance(m_Pos, pClosest->m_Pos) > 64)
             continue;
 
-        if(pClosest->GetPlayer()->GetTank())
+        if(pClosest->GetPlayer()->GetH())
             continue;
+
+        if(pClosest->GetPlayer()->GetTank())
+            return;
 
         if(pClosest->GetPlayer()->GetCars())
             return;
-        
-        if(pClosest->GetPlayer()->GetH())
-            return;
 
-        m_pTank = GameServer()->GetPlayerChar(i);
+        m_pH = GameServer()->GetPlayerChar(i);
         m_IsTaken = true;
         m_DropTick = 0;
         m_IsDropped = false;
-        m_pTank->GetPlayer()->SetTank(true);
-        m_pTank->GetPlayer()->OnTank = true;
+        m_pH->GetPlayer()->SetH(true);
+        m_pH->GetPlayer()->OnH = true;
         m_ExitTick = 200;
         break;
     }
 }
 
-void CTank::Tick()
+void CH::Tick()
 {
 
     if(m_ExitTick)
         m_ExitTick--;
 
-    if(!m_pTank || !m_pTank->IsAlive() || !m_pTank->GetPlayer()->OnTank)
+    if(!m_pH || !m_pH->IsAlive() || !m_pH->GetPlayer()->OnH)
     {
         if(m_IsTaken)
         {
             m_DropTick = Server()->Tick() + Server()->TickSpeed() * 20;
             m_IsTaken = false;
             m_IsDropped = true;
-            m_pTank = NULL;
+            m_pH = NULL;
             m_Vel = vec2(0, 0);
         }
     }
@@ -128,15 +118,15 @@ void CTank::Tick()
             Reset();
     }
 
-    if(m_pTank && m_pTank->IsAlive())
+    if(m_pH && m_pH->IsAlive())
     {
-        m_Pos = m_pTank->m_Pos + vec2(0, 0);
+        m_Pos = m_pH->m_Pos + vec2(0, 0);
         if(GameServer()->Collision()->CheckPoint(m_Pos))
-            m_Pos = m_pTank->m_Pos + vec2(0, 0);
+            m_Pos = m_pH->m_Pos + vec2(0, 0);
         if(GameServer()->Collision()->CheckPoint(m_Pos))
-            m_Pos = m_pTank->m_Pos;
+            m_Pos = m_pH->m_Pos;
 
-        m_pTank->GetPlayer()->OnTank = true;
+        m_pH->GetPlayer()->OnH = true;
     }
 
     if(!m_IsTaken)
@@ -152,12 +142,12 @@ void CTank::Tick()
 	}
 }
 
-void CTank::GiveEvent()
+void CH::GiveEvent()
 {
 
 }
 
-bool CTank::TestBox(vec2 Pos, vec2 Size)
+bool CH::TestBox(vec2 Pos, vec2 Size)
 {
 	Size *= 0.5f;
 	if(GameServer()->Collision()->CheckPoint(Pos.x-Size.x, Pos.y+Size.y))
@@ -167,7 +157,7 @@ bool CTank::TestBox(vec2 Pos, vec2 Size)
 	return false;
 }
 
-void CTank::MoveBox(vec2 *pInoutPos, vec2 *pInoutVel, vec2 Size, float Elasticity)
+void CH::MoveBox(vec2 *pInoutPos, vec2 *pInoutVel, vec2 Size, float Elasticity)
 {
 	// do the move
 	vec2 Pos = *pInoutPos;
@@ -225,11 +215,11 @@ void CTank::MoveBox(vec2 *pInoutPos, vec2 *pInoutVel, vec2 Size, float Elasticit
 	*pInoutVel = Vel;
 }
 
-void CTank::Snap(int SnappingClient)
+void CH::Snap(int SnappingClient)
 {
-    CNetObj_Pickup *pObj[6];
+    CNetObj_Pickup *pObj[5];
 
-    for(int i = 0; i < 6; i++)
+    for(int i = 0; i < 5; i++)
     {
         pObj[i] = static_cast<CNetObj_Pickup *>(Server()->SnapNewItem(NETOBJTYPE_PICKUP, m_aIDs[i], sizeof(CNetObj_Pickup)));
 	    

@@ -122,6 +122,8 @@ void CCharacter::RemoveWeapons()
 	m_aWeapons[WEAPON_SHOTGUN].m_Ammo = 0;
 	m_aWeapons[WEAPON_CARGUN].m_Got = false;
 	m_aWeapons[WEAPON_CARGUN].m_Ammo = 0;
+	m_aWeapons[WEAPON_TANKBOMB].m_Got = false;
+	m_aWeapons[WEAPON_TANKBOMB].m_Ammo = 0;
 }
 
 void CCharacter::HandleNinja()
@@ -423,6 +425,18 @@ void CCharacter::FireWeapon()
 			GameServer()->CreateSound(m_Pos, SOUND_HIT);
 		} break;
 
+		case WEAPON_TANKBOMB:
+		{
+			CProjectile *pProj = new CProjectile(GameWorld(), WEAPON_GRENADE,
+				m_pPlayer->GetCID(),
+				ProjStartPos,
+				Direction,
+				(int)(Server()->TickSpeed()*GameServer()->Tuning()->m_GrenadeLifetime),
+				4, true, 2, SOUND_GRENADE_EXPLODE, WEAPON_GRENADE);
+
+			GameServer()->CreateSound(m_Pos, SOUND_GRENADE_FIRE);
+		} break;
+
 	}
 
 	m_AttackTick = Server()->Tick();
@@ -430,8 +444,10 @@ void CCharacter::FireWeapon()
 	if(m_aWeapons[m_ActiveWeapon].m_Ammo > 0) // -1 == unlimited
 		m_aWeapons[m_ActiveWeapon].m_Ammo--;
 
-	if(!m_ReloadTimer)
+	if(!m_ReloadTimer && m_ActiveWeapon != WEAPON_TANKBOMB && m_ActiveWeapon != WEAPON_CARGUN)
 		m_ReloadTimer = g_pData->m_Weapons.m_aId[m_ActiveWeapon].m_Firedelay * Server()->TickSpeed() / 1000;
+	else
+		m_ReloadTimer = 1 * Server()->TickSpeed() / 1000;
 }
 
 void CCharacter::HandleWeapons()
@@ -569,14 +585,34 @@ void CCharacter::Tick()
 		m_ActiveWeapon = WEAPON_CARGUN;
 		GiveWeapon(WEAPON_CARGUN, -1);
 	}
-	else if(!m_pPlayer->OnCar && m_aWeapons[WEAPON_CARGUN].m_Got && m_pPlayer)
+	else if(m_pPlayer->OnTank && m_aWeapons[WEAPON_TANKBOMB].m_Got == false && m_pPlayer)
+	{
+		GiveWeapon(WEAPON_TANKBOMB, -1);
+		RemoveWeapons();
+		m_aWeapons[WEAPON_TANKBOMB].m_Ammo = -1;
+		m_ActiveWeapon = WEAPON_TANKBOMB;
+		GiveWeapon(WEAPON_TANKBOMB, -1);
+	}
+	else if(!m_pPlayer->OnTank && !m_pPlayer->OnCar && m_aWeapons[WEAPON_CARGUN].m_Got && m_pPlayer)
 	{
 		RemoveWeapons();
 		m_ActiveWeapon = WEAPON_HAMMER;
 	}
+	
 	if(m_pPlayer->OnCar && m_aWeapons[WEAPON_CARGUN].m_Ammo <= 1 && m_pPlayer)
 	{
 		m_aWeapons[WEAPON_CARGUN].m_Ammo == 99999999;
+	}
+	else if(m_pPlayer->OnTank && m_aWeapons[WEAPON_TANKBOMB].m_Ammo <= 1 && m_pPlayer)
+	{
+		m_aWeapons[WEAPON_CARGUN].m_Ammo == 99999999;
+	}
+	if(m_pPlayer->OnTank == 1)
+		m_Core.m_Jumped &= ~2;
+	else if(m_pPlayer->OnH == 1 && m_Input.m_Hook)
+	{
+		m_Core.m_Vel.y = -4;
+		
 	}
 	if(m_pPlayer->m_ForceBalanced)
 	{

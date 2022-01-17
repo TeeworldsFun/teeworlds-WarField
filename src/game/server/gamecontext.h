@@ -14,6 +14,7 @@
 #include "gamecontroller.h"
 #include "gameworld.h"
 #include "player.h"
+#include "entities/flag.h"
 
 #ifdef _MSC_VER
 typedef __int32 int32_t;
@@ -197,6 +198,8 @@ public:
 	virtual const char *GameType();
 	virtual const char *Version();
 	virtual const char *NetVersion();
+
+	CFlag *m_apFlags[2];
 };
 
 inline int64_t CmaskAll() { return -1LL; }

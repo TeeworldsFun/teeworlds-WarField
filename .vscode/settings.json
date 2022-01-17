@@ -7,6 +7,9 @@
         "limits": "cpp",
         "memory": "cpp",
         "new": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "*.tcc": "cpp",
+        "cmath": "cpp",
+        "random": "cpp"
     }
 }
