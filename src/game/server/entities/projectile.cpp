@@ -53,6 +53,10 @@ vec2 CProjectile::GetPos(float Time)
 			Curvature = GameServer()->Tuning()->m_GunCurvature;
 			Speed = GameServer()->Tuning()->m_GunSpeed;
 			break;
+		case WEAPON_SUPGUN:
+			Curvature = 0.0f;
+			Speed = 2750.0f;
+			break; 
 	}
 
 	return CalcPos(m_Pos, m_Direction, Curvature, Speed, Time);
@@ -98,7 +102,7 @@ void CProjectile::FillInfo(CNetObj_Projectile *pProj)
 	pProj->m_VelX = (int)(m_Direction.x*100.0f);
 	pProj->m_VelY = (int)(m_Direction.y*100.0f);
 	pProj->m_StartTick = m_StartTick;
-	pProj->m_Type = m_Type;
+	pProj->m_Type = m_Weapon;
 }
 
 void CProjectile::Snap(int SnappingClient)

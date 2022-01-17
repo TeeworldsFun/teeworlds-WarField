@@ -266,11 +266,11 @@ void CCharacter::FireWeapon()
 	vec2 Direction = normalize(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY));
 
 	bool FullAuto = false;
-	if(m_ActiveWeapon == WEAPON_GRENADE || m_ActiveWeapon == WEAPON_SHOTGUN || m_ActiveWeapon == WEAPON_LASER || m_ActiveWeapon == WEAPON_GUN || m_ActiveWeapon == WEAPON_HAMMER || m_ActiveWeapon == WEAPON_CARGUN)
+	if(m_ActiveWeapon == WEAPON_GRENADE || m_ActiveWeapon == WEAPON_SHOTGUN || m_ActiveWeapon == WEAPON_LASER || m_ActiveWeapon == WEAPON_GUN || m_ActiveWeapon == WEAPON_HAMMER || m_ActiveWeapon == WEAPON_CARGUN || m_ActiveWeapon == WEAPON_SUPGUN)
 		FullAuto = true;
 
 
-	// check if we gonna fire
+	// check if we gonna fire 
 	bool WillFire = false;
 	if(CountInput(m_LatestPrevInput.m_Fire, m_LatestInput.m_Fire).m_Presses)
 		WillFire = true;
@@ -426,7 +426,7 @@ void CCharacter::FireWeapon()
 		} break;
 
 		case WEAPON_TANKBOMB:
-		{
+		{ //tuning.h 8:1 9:1 10:1 11:1 12:1 bug
 			CProjectile *pProj = new CProjectile(GameWorld(), WEAPON_GRENADE,
 				m_pPlayer->GetCID(),
 				ProjStartPos,
@@ -444,6 +444,18 @@ void CCharacter::FireWeapon()
 			GameServer()->CreateSound(m_Pos, SOUND_GRENADE_FIRE);
 		} break;
 
+		case WEAPON_SUPGUN:
+		{ //Speed on 'projectile.cpp' 
+			CProjectile *pProj = new CProjectile(GameWorld(), WEAPON_SUPGUN,
+				m_pPlayer->GetCID(),
+				ProjStartPos,
+				Direction,
+				(int)(Server()->TickSpeed()*GameServer()->Tuning()->m_GunLifetime),
+				1, 0, 0, -1, WEAPON_GUN);
+			GameServer()->CreateSound(m_Pos, SOUND_GUN_FIRE);
+
+		} break;
+
 	}
 
 	m_AttackTick = Server()->Tick();
@@ -453,6 +465,8 @@ void CCharacter::FireWeapon()
 
 	if(!m_ReloadTimer && m_ActiveWeapon != WEAPON_TANKBOMB && m_ActiveWeapon != WEAPON_CARGUN)
 		m_ReloadTimer = g_pData->m_Weapons.m_aId[m_ActiveWeapon].m_Firedelay * Server()->TickSpeed() / 1000;
+	else if(m_ActiveWeapon == WEAPON_SUPGUN)
+		m_ReloadTimer = 125 * Server()->TickSpeed() / 1000;
 	else
 		m_ReloadTimer = 1 * Server()->TickSpeed() / 1000;
 }
@@ -605,7 +619,7 @@ void CCharacter::Tick()
 		RemoveWeapons();
 		m_ActiveWeapon = WEAPON_HAMMER;
 	}
-	
+
 	if(m_pPlayer->OnCar && m_aWeapons[WEAPON_CARGUN].m_Ammo <= 1 && m_pPlayer)
 	{
 		m_aWeapons[WEAPON_CARGUN].m_Ammo = 99999999;

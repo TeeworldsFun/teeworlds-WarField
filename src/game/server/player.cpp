@@ -78,7 +78,7 @@ void CPlayer::UpdateTune()
 	else if(m_IsTank)
 	{
 		pTuningParams->m_GroundControlSpeed = 4.0f;
-		pTuningParams->m_HookLength = 0.0f;
+		pTuningParams->m_HookLength = 5.0f;
 		pTuningParams->m_Gravity = 0.7f;
 		pTuningParams->m_GroundJumpImpulse = 0.0f;
 		pTuningParams->m_AirJumpImpulse = 2.5f;
@@ -87,7 +87,7 @@ void CPlayer::UpdateTune()
 	else if(m_IsH)
 	{
 		pTuningParams->m_GroundControlSpeed = 0.0f;
-		pTuningParams->m_AirControlSpeed = 10.5f;
+		pTuningParams->m_AirControlSpeed = 7.5f;
 		pTuningParams->m_HookLength = 0.0f;
 		pTuningParams->m_Gravity = 0.7f;
 		pTuningParams->m_GroundJumpImpulse = 0.0f;
@@ -99,8 +99,15 @@ void CPlayer::UpdateTune()
 
 void CPlayer::Tick()
 {
-	if(m_IsH || m_IsTank || m_IsCars)
-		GameServer()->SendBroadcast("输入/e下车(建议F1绑定按键自动下车)\n示例(F1输入):\nbind e say /e", m_ClientID);
+	if(Server()->Tick()%200 == 0)
+	{	
+		if(OnH)
+			GameServer()->SendBroadcast("载具: 直升机", m_ClientID);
+		else if(OnCar)
+			GameServer()->SendBroadcast("载具: 车", m_ClientID);
+		else if(OnTank)
+			GameServer()->SendBroadcast("载具: 坦克", m_ClientID);
+	}
 #ifdef CONF_DEBUG
 	if(!g_Config.m_DbgDummies || m_ClientID < MAX_CLIENTS-g_Config.m_DbgDummies)
 #endif

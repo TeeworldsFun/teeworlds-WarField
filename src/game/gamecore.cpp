@@ -56,6 +56,9 @@ float VelocityRamp(float Value, float Start, float Range, float Curvature)
 	return 1.0f/powf(Curvature, (Value-Start)/Range);
 }
 
+const float CCharacterCore::PassengerYOffset = -50;
+const float CCharacterCore::PhysicalSize = 28.0f;
+
 void CCharacterCore::Init(CWorldCore *pWorld, CCollision *pCollision)
 {
 	m_pWorld = pWorld;
@@ -73,6 +76,9 @@ void CCharacterCore::Reset()
 	m_HookedPlayer = -1;
 	m_Jumped = 0;
 	m_TriggeredEvents = 0;
+	m_Passenger = nullptr;
+	m_IsPassenger = false;
+	m_ProbablyStucked = false;
 }
 
 void CCharacterCore::Tick(bool UseInput, const CTuningParams* pTuningParams)
@@ -87,6 +93,9 @@ void CCharacterCore::Tick(bool UseInput, const CTuningParams* pTuningParams)
 	if(m_pCollision->CheckPoint(m_Pos.x-PhysSize/2, m_Pos.y+PhysSize/2+5))
 		Grounded = true;
 
+	bool Stucked = false;
+	Stucked = m_pCollision->TestBox(m_Pos, vec2(PhysicalSize, PhysicalSize));
+
 	vec2 TargetDirection = normalize(vec2(m_Input.m_TargetX, m_Input.m_TargetY));
 
 	m_Vel.y += pTuningParams->m_Gravity;
@@ -94,6 +103,29 @@ void CCharacterCore::Tick(bool UseInput, const CTuningParams* pTuningParams)
 	float MaxSpeed = Grounded ? pTuningParams->m_GroundControlSpeed : pTuningParams->m_AirControlSpeed;
 	float Accel = Grounded ? pTuningParams->m_GroundControlAccel : pTuningParams->m_AirControlAccel;
 	float Friction = Grounded ? pTuningParams->m_GroundFriction : pTuningParams->m_AirFriction;
+
+	// InfClassR taxi mode, todo: cleanup & move out from core
+	if (m_Passenger && (m_Passenger->m_Input.m_Jump > 0))
+	{
+		SetPassenger(nullptr);
+	}
+
+	if (m_Passenger) {
+		m_Passenger->m_Vel = m_Vel;
+		if (abs(m_Passenger->m_Vel.y) <= 1.0f)
+			m_Passenger->m_Vel.y = 0.0f;
+		m_Passenger->m_Pos.x = m_Pos.x;
+		m_Passenger->m_Pos.y = m_Pos.y + PassengerYOffset;
+	}
+
+	if (m_ProbablyStucked) {
+		m_Pos.y += 1;
+		if (!Stucked) {
+			m_ProbablyStucked = false;
+			m_Pos.y -= 1;
+		}
+	}
+	// InfClassR taxi mode end
 
 	// handle input
 	if(UseInput)
@@ -214,6 +246,8 @@ void CCharacterCore::Tick(bool UseInput, const CTuningParams* pTuningParams)
 			for(int i = 0; i < MAX_CLIENTS; i++)
 			{
 				CCharacterCore *pCharCore = m_pWorld->m_apCharacters[i];
+				if (IsChildCharacter(pCharCore, this))
+					continue;
 				if(!pCharCore || pCharCore == this)
 					continue;
 
@@ -347,6 +381,14 @@ void CCharacterCore::Tick(bool UseInput, const CTuningParams* pTuningParams)
 					// add a little bit force to the guy who has the grip
 					m_Vel.x = SaturatedAdd(-DragSpeed, DragSpeed, m_Vel.x, -Accel*Dir.x*0.25f);
 					m_Vel.y = SaturatedAdd(-DragSpeed, DragSpeed, m_Vel.y, -Accel*Dir.y*0.25f);
+
+					// InfClassR taxi mode, todo: cleanup
+					if (!pCharCore->m_Passenger && !IsChildCharacter(pCharCore, this)) {
+						pCharCore->SetPassenger(this);
+						m_HookedPlayer = -1;
+						m_HookState = HOOK_RETRACTED;
+						m_HookPos = m_Pos;
+					}
 				}
 			}
 		}
@@ -442,4 +484,30 @@ void CCharacterCore::Quantize()
 	CNetObj_CharacterCore Core;
 	Write(&Core);
 	Read(&Core);
+}
+
+bool CCharacterCore::IsChildCharacter(CCharacterCore *suspect, CCharacterCore *me) {
+	if (me->m_Passenger) {
+		if (me->m_Passenger == suspect)
+			return true;
+		else return IsChildCharacter(suspect, me->m_Passenger);
+	}
+	else return false;
+}
+
+void CCharacterCore::SetPassenger(CCharacterCore *pPassenger)
+{
+	if(m_Passenger == pPassenger)
+		return;
+
+	if (m_Passenger)
+	{
+		m_Passenger->m_IsPassenger = false;
+		m_Passenger->m_ProbablyStucked = true;
+	}
+	m_Passenger = pPassenger;
+	if (pPassenger)
+	{
+		m_Passenger->m_IsPassenger = true;
+	}
 }
