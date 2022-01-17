@@ -99,6 +99,8 @@ void CPlayer::UpdateTune()
 
 void CPlayer::Tick()
 {
+	if(m_IsH || m_IsTank || m_IsCars)
+		GameServer()->SendBroadcast("输入/e下车(建议F1绑定按键自动下车)\n示例(F1输入):\nbind e say /e", m_ClientID);
 #ifdef CONF_DEBUG
 	if(!g_Config.m_DbgDummies || m_ClientID < MAX_CLIENTS-g_Config.m_DbgDummies)
 #endif

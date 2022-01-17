@@ -433,6 +433,12 @@ void CCharacter::FireWeapon()
 				Direction,
 				(int)(Server()->TickSpeed()*GameServer()->Tuning()->m_GrenadeLifetime),
 				4, true, 2, SOUND_GRENADE_EXPLODE, WEAPON_GRENADE);
+			CProjectile *pProj = new CProjectile(GameWorld(), WEAPON_GUN,
+				m_pPlayer->GetCID(),
+				ProjStartPos,
+				Direction,
+				(int)(Server()->TickSpeed()*GameServer()->Tuning()->m_GunLifetime),
+				2, false, -4, SOUND_HOOK_ATTACH_GROUND, WEAPON_GUN);
 
 			GameServer()->CreateSound(m_Pos, SOUND_GRENADE_FIRE);
 		} break;
@@ -601,11 +607,11 @@ void CCharacter::Tick()
 	
 	if(m_pPlayer->OnCar && m_aWeapons[WEAPON_CARGUN].m_Ammo <= 1 && m_pPlayer)
 	{
-		m_aWeapons[WEAPON_CARGUN].m_Ammo == 99999999;
+		m_aWeapons[WEAPON_CARGUN].m_Ammo = 99999999;
 	}
 	else if(m_pPlayer->OnTank && m_aWeapons[WEAPON_TANKBOMB].m_Ammo <= 1 && m_pPlayer)
 	{
-		m_aWeapons[WEAPON_CARGUN].m_Ammo == 99999999;
+		m_aWeapons[WEAPON_TANKBOMB].m_Ammo = 99999999;
 	}
 	if(m_pPlayer->OnTank == 1)
 		m_Core.m_Jumped &= ~2;
@@ -777,6 +783,8 @@ void CCharacter::Die(int Killer, int Weapon)
 	m_pPlayer->m_IsTank = false;
 	m_pPlayer->OnTank = false;
 	m_pPlayer->OnCar = false;
+	m_pPlayer->OnH = false;
+	m_pPlayer->m_IsH = false;
 	
 	char aBuf[256];
 	str_format(aBuf, sizeof(aBuf), "kill killer='%d:%s' victim='%d:%s' weapon=%d special=%d",
