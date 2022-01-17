@@ -106,9 +106,9 @@ void CPlayer::Tick()
 #endif
 	if(!Server()->ClientIngame(m_ClientID))
 		return;
-	char aBuf[64];
+	/*char aBuf[64];
 	str_format(aBuf, sizeof(aBuf), "Tank: %d, Car: %d", GetTank(), GetCars());
-	GameServer()->SendBroadcast(aBuf, -1);
+	GameServer()->SendBroadcast(aBuf, -1);*/
 	Server()->SetClientScore(m_ClientID, m_Score + m_GivenDamage/100);
 	// do latency stuff
 	{
