@@ -573,10 +573,6 @@ int CNetServer::Send(CNetChunk *pChunk)
 			if(pChunk->m_Flags&NETSENDFLAG_FLUSH)
 				m_aSlots[pChunk->m_ClientID].m_Connection.Flush();
 		}
-		else
-		{
-			Drop(pChunk->m_ClientID, "Error sending data");
-		}
 	}
 	return 0;
 }
