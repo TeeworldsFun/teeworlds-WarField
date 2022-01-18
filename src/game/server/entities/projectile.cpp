@@ -3,6 +3,7 @@
 #include <game/generated/protocol.h>
 #include <game/server/gamecontext.h>
 #include "projectile.h"
+#include <game/server/CommanderKiller/Weapons/weapons.h>
 
 CProjectile::CProjectile(CGameWorld *pGameWorld, int Type, int Owner, vec2 Pos, vec2 Dir, int Span,
 		int Damage, bool Explosive, float Force, int SoundImpact, int Weapon)
@@ -40,10 +41,6 @@ vec2 CProjectile::GetPos(float Time)
 			Speed = GameServer()->Tuning()->m_GrenadeSpeed;
 			break;
 
-		case WEAPON_CARGUN:
-			Curvature = 0.0f;
-			Speed = 500.0f;
-			break;
 		case WEAPON_SHOTGUN:
 			Curvature = GameServer()->Tuning()->m_ShotgunCurvature;
 			Speed = GameServer()->Tuning()->m_ShotgunSpeed;
@@ -53,10 +50,6 @@ vec2 CProjectile::GetPos(float Time)
 			Curvature = GameServer()->Tuning()->m_GunCurvature;
 			Speed = GameServer()->Tuning()->m_GunSpeed;
 			break;
-		case WEAPON_SUPGUN:
-			Curvature = 0.0f;
-			Speed = 2750.0f;
-			break; 
 	}
 
 	return CalcPos(m_Pos, m_Direction, Curvature, Speed, Time);

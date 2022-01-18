@@ -670,6 +670,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 				m_apPlayers[ClientID]->OnTank = false;
 				m_apPlayers[ClientID]->OnH = false;
 				SendChatTarget(ClientID, aBuf);
+				m_apPlayers[ClientID]->GetCharacter()->RemoveWeapons();
 			}
 			else if(pMsg->m_pMessage[0]=='/')
 			{

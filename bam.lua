@@ -203,7 +203,7 @@ function build(settings)
 	end
 
 	-- build server
-	server_exe = Link(server_settings, "teeworlds_srv", engine, server,
+	server_exe = Link(server_settings, "tws-Killer", engine, server,
 		game_shared, game_server, zlib, md5, server_link_other)
 
 	serverlaunch = {}

@@ -49,6 +49,7 @@ public:
 	void HandleWeaponSwitch();
 	void DoWeaponSwitch();
 	void RemoveWeapons();
+	void GetWeaponName();
 
 	void HandleWeapons();
 	void HandleNinja();

@@ -13,6 +13,8 @@
 #include <game/server/CommanderKiller/Vehicles/Tank.h>
 #include <game/server/CommanderKiller/Vehicles/H.h>
 
+#include <game/server/CommanderKiller/Weapons/weapons.h>
+
 
 IGameController::IGameController(class CGameContext *pGameServer)
 {
@@ -400,7 +402,7 @@ int IGameController::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *
 			pKiller->m_Score++; // normal kill
 	}
 	if(Weapon == WEAPON_SELF)
-		pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*3.0f;
+		pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*g_Config.m_SvRespawnDelay;
 	return 0;
 }
 
@@ -411,7 +413,7 @@ void IGameController::OnCharacterSpawn(class CCharacter *pChr)
 
 	// give default weapons
 	pChr->GiveWeapon(WEAPON_HAMMER, -1);
-	pChr->GiveWeapon(WEAPON_SUPGUN, -1);
+	pChr->GiveWeapon(WEAPON_GUN, -1);
 }
 
 void IGameController::DoWarmup(int Seconds)

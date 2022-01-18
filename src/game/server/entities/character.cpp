@@ -4,6 +4,9 @@
 #include <engine/shared/config.h>
 #include <game/server/gamecontext.h>
 #include <game/mapitems.h>
+#include <game/server/CommanderKiller/Weapons/weapons.h>
+
+#include <game/server/CommanderKiller/Weapons/supgun.h>
 
 #include "character.h"
 #include "laser.h"
@@ -327,9 +330,9 @@ void CCharacter::FireWeapon()
 					Dir = normalize(pTarget->m_Pos - m_Pos);
 				else
 					Dir = vec2(0.f, -1.f);
-
-				pTarget->TakeDamage(vec2(0.f, -1.f) + normalize(Dir + vec2(0.f, -1.1f)) * 10.0f, g_pData->m_Weapons.m_Hammer.m_pBase->m_Damage,
+				pTarget->TakeDamage(vec2(0.f, -1.f) + normalize(Dir + vec2(0.f, -1.1f)) * 10.0f, 1,
 					m_pPlayer->GetCID(), m_ActiveWeapon);
+				GameServer()->SendBroadcast("跑!!!!!", pTarget->GetPlayer()->GetCID());
 				Hits++;
 			}
 
@@ -426,7 +429,7 @@ void CCharacter::FireWeapon()
 		} break;
 
 		case WEAPON_TANKBOMB:
-		{ //tuning.h 8:1 9:1 10:1 11:1 12:1 bug
+		{
 			CProjectile *pProj = new CProjectile(GameWorld(), WEAPON_GRENADE,
 				m_pPlayer->GetCID(),
 				ProjStartPos,
@@ -434,25 +437,40 @@ void CCharacter::FireWeapon()
 				(int)(Server()->TickSpeed()*GameServer()->Tuning()->m_GrenadeLifetime),
 				4, true, 2, SOUND_GRENADE_EXPLODE, WEAPON_GRENADE);
 
-			CProjectile *pProja = new CProjectile(GameWorld(), WEAPON_GUN,
-				m_pPlayer->GetCID(),
-				ProjStartPos,
-				Direction,
-				(int)(Server()->TickSpeed()*GameServer()->Tuning()->m_GunLifetime),
-				2, false, -4, SOUND_HOOK_ATTACH_GROUND, WEAPON_GUN);
-
 			GameServer()->CreateSound(m_Pos, SOUND_GRENADE_FIRE);
 		} break;
 
 		case WEAPON_SUPGUN:
-		{ //Speed on 'projectile.cpp' 
-			CProjectile *pProj = new CProjectile(GameWorld(), WEAPON_SUPGUN,
-				m_pPlayer->GetCID(),
-				ProjStartPos,
-				Direction,
-				(int)(Server()->TickSpeed()*GameServer()->Tuning()->m_GunLifetime),
-				1, 0, 0, -1, WEAPON_GUN);
-			GameServer()->CreateSound(m_Pos, SOUND_GUN_FIRE);
+		{
+			// reset objects Hit
+			m_NumObjectsHit = 0;
+
+			CCharacter *apEnts[MAX_CLIENTS];
+			int Hits = 0;
+			int Num = GameServer()->m_World.FindEntities(ProjStartPos, m_ProximityRadius*0.5f, (CEntity**)apEnts,
+														MAX_CLIENTS, CGameWorld::ENTTYPE_CHARACTER);
+
+			for (int i = 0; i < Num; ++i)
+			{
+				int ShotSpread = 1;
+				m_aWeapons[WEAPON_CARGUN].m_Ammo++;
+				for(int i = -ShotSpread; i <= ShotSpread; ++i)
+				{
+					float Spreading[] = {-0.185f, -0.070f, 0, 0.070f, 0.185f};
+					float a = GetAngle(Direction);
+					a += Spreading[i+2];
+					float v = 1-(absolute(i)/(float)ShotSpread);
+					float Speed = mix((float)GameServer()->Tuning()->m_ShotgunSpeeddiff, 1.0f, v);
+					CProjectile *pProj = new CProjectile(GameWorld(), WEAPON_GUN,
+						m_pPlayer->GetCID(),
+						ProjStartPos,
+						vec2(cosf(a), sinf(a))*Speed,
+						4,
+						1, false, 5, -1, WEAPON_GUN);
+					
+				}
+				GameServer()->CreateSound(m_Pos, SOUND_HIT);
+			}
 
 		} break;
 
@@ -466,7 +484,7 @@ void CCharacter::FireWeapon()
 	if(!m_ReloadTimer && m_ActiveWeapon != WEAPON_TANKBOMB && m_ActiveWeapon != WEAPON_CARGUN)
 		m_ReloadTimer = g_pData->m_Weapons.m_aId[m_ActiveWeapon].m_Firedelay * Server()->TickSpeed() / 1000;
 	else if(m_ActiveWeapon == WEAPON_SUPGUN)
-		m_ReloadTimer = 125 * Server()->TickSpeed() / 1000;
+		m_ReloadTimer = 30 * Server()->TickSpeed() / 1000;
 	else
 		m_ReloadTimer = 1 * Server()->TickSpeed() / 1000;
 }
@@ -518,10 +536,22 @@ void CCharacter::HandleWeapons()
 
 bool CCharacter::GiveWeapon(int Weapon, int Ammo)
 {
-	if(Weapon == WEAPON_CARGUN)
+	if(Weapon == WEAPON_GUN && m_pPlayer->OnCar)
 	{
-		m_aWeapons[Weapon].m_Got = true;
-		m_aWeapons[Weapon].m_Ammo = 9999999999999;
+		m_aWeapons[WEAPON_CARGUN].m_Got = true;
+		m_aWeapons[WEAPON_CARGUN].m_Ammo = 9999999999999;
+		return true;
+	}
+	else if(Weapon == WEAPON_GRENADE && m_pPlayer->OnTank)
+	{
+		m_aWeapons[WEAPON_TANKBOMB].m_Got = true;
+		m_aWeapons[WEAPON_TANKBOMB].m_Ammo = 9999999999999;
+		return true;
+	}
+	else if(Weapon == WEAPON_GUN && !m_pPlayer->OnCar)
+	{
+		m_aWeapons[WEAPON_SUPGUN].m_Got = true;
+		m_aWeapons[WEAPON_SUPGUN].m_Ammo = 9999999999999;
 		return true;
 	}
 	else if(m_aWeapons[Weapon].m_Ammo < g_pData->m_Weapons.m_aId[Weapon].m_Maxammo || !m_aWeapons[Weapon].m_Got)
