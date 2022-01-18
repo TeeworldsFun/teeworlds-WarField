@@ -126,6 +126,9 @@ public:
 
 	double GetTime();
 
+	int GetZoneValueAt(int ZoneHandle, const vec2 &Pos) const;
+	int GetCKZoneValueAt(const vec2 &Pos) const;
+
 protected:
 	CGameContext *GameServer() const { return m_pGameServer; }
 	IServer *Server() const { return m_pServer; }

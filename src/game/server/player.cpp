@@ -82,7 +82,6 @@ void CPlayer::UpdateTune()
 		pTuningParams->m_Gravity = 0.7f;
 		pTuningParams->m_GroundJumpImpulse = 0.0f;
 		pTuningParams->m_AirJumpImpulse = 2.5f;
-		return;
 	}
 	else if(m_IsH)
 	{
@@ -93,13 +92,17 @@ void CPlayer::UpdateTune()
 		pTuningParams->m_GroundJumpImpulse = 0.0f;
 		pTuningParams->m_AirJumpImpulse = 0.0f;
 		pTuningParams->m_Gravity = 0.17f;
-		return;
+	}
+	
+	if(OnWater)
+	{
+		pTuningParams->m_Gravity = -0.25f;
 	}
 }
 
 void CPlayer::Tick()
 {
-	if(Server()->Tick()%200 == 0)
+	if(Server()->Tick()%100 == 0)
 	{	
 		if(OnH)
 			GameServer()->SendBroadcast("载具: 直升机", m_ClientID);
@@ -108,6 +111,7 @@ void CPlayer::Tick()
 		else if(OnTank)
 			GameServer()->SendBroadcast("载具: 坦克", m_ClientID);
 	}
+
 #ifdef CONF_DEBUG
 	if(!g_Config.m_DbgDummies || m_ClientID < MAX_CLIENTS-g_Config.m_DbgDummies)
 #endif

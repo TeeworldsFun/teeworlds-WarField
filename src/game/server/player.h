@@ -16,7 +16,8 @@ public:
 	CPlayer(CGameContext *pGameServer, int ClientID, int Team);
 	~CPlayer();
 
-	bool TeamWorking;
+	bool OnHealth;
+	bool OnWater;
 	bool m_IsTank = false;
 	int m_ExitTick;
 

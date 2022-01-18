@@ -386,6 +386,16 @@ void IGameController::OnPlayerInfoChange(class CPlayer *pP)
 	}
 }
 
+int IGameController::GetZoneValueAt(int ZoneHandle, const vec2 &Pos) const
+{
+	return GameServer()->Collision()->GetZoneValueAt(ZoneHandle, Pos);
+}
+
+int IGameController::GetCKZoneValueAt(const vec2 &Pos) const
+{
+	return GetZoneValueAt(GameServer()->m_ZoneHandle_CK, Pos);
+}
+
 
 int IGameController::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int Weapon)
 {
@@ -490,6 +500,7 @@ void IGameController::Tick()
 		if(!m_Warmup)
 			StartRound();
 	}
+
 
 	if(m_GameOverTick != -1)
 	{

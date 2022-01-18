@@ -76,6 +76,9 @@ public:
 	bool IsAlive() const { return m_Alive; }
 	class CPlayer *GetPlayer() { return m_pPlayer; }
 
+	int m_Health;
+	int m_Armor;
+
 private:
 	// player controlling this character
 	class CPlayer *m_pPlayer;
@@ -114,9 +117,6 @@ private:
 	int m_Jumped;
 
 	int m_DamageTakenTick;
-
-	int m_Health;
-	int m_Armor;
 
 	// ninja
 	struct

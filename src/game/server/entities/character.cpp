@@ -677,6 +677,18 @@ void CCharacter::Tick()
 	m_Core.m_Input = m_Input;
 	m_Core.Tick(true, m_pPlayer->GetNextTuningParams());
 
+	//Index SHIT, FXXK ZONE THINGS, MO**ER FU**ER!
+	int Index = GameServer()->Collision()->GetZoneValueAt(GameServer()->m_ZoneHandle_CK, m_Pos.x, m_Pos.y);
+
+	if(Index == ZONE_WATER)
+		m_pPlayer->OnWater = true;
+	else if(Index == ZONE_HEALTH)
+		m_pPlayer->OnHealth = true;
+	else
+	{
+		m_pPlayer->OnHealth = false;
+		m_pPlayer->OnWater = false;
+	}
 	// handle death-tiles and leaving gamelayer
 	if(GameServer()->Collision()->GetCollisionAt(m_Pos.x+m_ProximityRadius/3.f, m_Pos.y-m_ProximityRadius/3.f)&CCollision::COLFLAG_DEATH ||
 		GameServer()->Collision()->GetCollisionAt(m_Pos.x+m_ProximityRadius/3.f, m_Pos.y+m_ProximityRadius/3.f)&CCollision::COLFLAG_DEATH ||
