@@ -6,7 +6,6 @@ datasrc/*.pyc
 objs
 SDL.dll
 freetype.dll
-autoexec.cfg
 
 crapnet*
 dilate*
