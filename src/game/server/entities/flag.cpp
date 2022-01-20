@@ -42,13 +42,4 @@ void CFlag::Snap(int SnappingClient)
 	pFlag->m_X = (int)m_Pos.x;
 	pFlag->m_Y = (int)m_Pos.y;
 	pFlag->m_Team = m_Team;
-
-	CNetObj_Pickup *pObj = static_cast<CNetObj_Pickup *>(Server()->SnapNewItem(NETOBJTYPE_PICKUP, Server()->SnapNewID(), sizeof(CNetObj_Pickup)));
-	    
-    if(!pObj)
-    	return;
-
-	pObj->m_X = (int)m_Pos.x;
-    pObj->m_Y = (int)m_Pos.y + 1;
-    pObj->m_Type = POWERUP_HEALTH;
 }

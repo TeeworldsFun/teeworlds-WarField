@@ -10,7 +10,7 @@ CCar::CCar(CGameWorld *pGameWorld, vec2 Pos)
 {
 	m_StartPos = Pos;
 
-    for(int i = 0; i < 5; i++)
+    for(int i = 0; i < 3; i++)
     {
         m_aIDs[i] = Server()->SnapNewID();
         switch(i)
@@ -215,7 +215,7 @@ void CCar::Snap(int SnappingClient)
 {
     CNetObj_Pickup *pObj[5];
 
-    for(int i = 0; i < 5; i++)
+    for(int i = 0; i < 3; i++)
     {
         pObj[i] = static_cast<CNetObj_Pickup *>(Server()->SnapNewItem(NETOBJTYPE_PICKUP, m_aIDs[i], sizeof(CNetObj_Pickup)));
 	    
