@@ -469,12 +469,11 @@ void CCharacter::FireWeapon()
 						1, false, 5, -1, WEAPON_GUN);
 					
 				}
-				GameServer()->CreateSound(m_Pos, SOUND_HIT);
 			}
 
 			if(m_pPlayer->OnH && m_Input.m_Jump)
 			{
-				int ShotSpread = 6;
+				int ShotSpread = 2;
 
 					for(int i = -ShotSpread; i <= ShotSpread; ++i)
 					{
@@ -488,7 +487,7 @@ void CCharacter::FireWeapon()
 							ProjStartPos,
 							vec2(cosf(a), sinf(a))*Speed,
 							(int)(Server()->TickSpeed()*GameServer()->Tuning()->m_ShotgunLifetime),
-							1, true, 1, -1, WEAPON_SHOTGUN);
+							1, false, 1, -1, WEAPON_SHOTGUN);
 					}
 			}
 
@@ -506,7 +505,7 @@ void CCharacter::FireWeapon()
 	else if(m_ActiveWeapon == WEAPON_SUPGUN)
 		m_ReloadTimer = 30 * Server()->TickSpeed() / 1000;
 	else if(m_ActiveWeapon == WEAPON_TANKBOMB)
-		m_ReloadTimer = 1200 * Server()->TickSpeed() / 1000;
+		m_ReloadTimer = 600 * Server()->TickSpeed() / 1000;
 	else
 		m_ReloadTimer = 1 * Server()->TickSpeed() / 1000;
 }
