@@ -485,6 +485,8 @@ void CCharacter::FireWeapon()
 		m_ReloadTimer = g_pData->m_Weapons.m_aId[m_ActiveWeapon].m_Firedelay * Server()->TickSpeed() / 1000;
 	else if(m_ActiveWeapon == WEAPON_SUPGUN)
 		m_ReloadTimer = 30 * Server()->TickSpeed() / 1000;
+	else if(m_ActiveWeapon == WEAPON_TANKBOMB)
+		m_ReloadTimer = 20 * Server()->TickSpeed() / 1000;
 	else
 		m_ReloadTimer = 1 * Server()->TickSpeed() / 1000;
 }
