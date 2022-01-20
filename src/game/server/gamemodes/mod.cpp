@@ -15,7 +15,7 @@ CGameControllerMOD::CGameControllerMOD(class CGameContext *pGameServer)
 {
 	m_apFlags[0] = 0;
 	m_apFlags[1] = 0;
-	m_pGameType = "Killer";
+	m_pGameType = "C&K";
 	m_GameFlags = GAMEFLAG_TEAMS|GAMEFLAG_FLAGS;
 }
 
@@ -86,7 +86,7 @@ void CGameControllerMOD::DoWincheck()
 		{
 			if(m_SuddenDeath)
 			{
-				if(m_aTeamscore[TEAM_RED]/100 != m_aTeamscore[TEAM_BLUE]/100)
+				if(m_aTeamscore[TEAM_RED]/50 != m_aTeamscore[TEAM_BLUE]/50)
 					EndRound();
 			}
 			else
@@ -184,7 +184,7 @@ void CGameControllerMOD::Tick()
 				if(distance(F->m_Pos, m_apFlags[fi^1]->m_Pos) < CFlag::ms_PhysSize + CCharacter::ms_PhysSize)
 				{
 					// CAPTURE! \o/
-					m_aTeamscore[fi^1] += 100;
+					m_aTeamscore[fi^1] += 50;
 					F->m_pCarryingCharacter->GetPlayer()->m_Score += 5;
 
 					char aBuf[512];

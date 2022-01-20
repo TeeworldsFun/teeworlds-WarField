@@ -525,11 +525,33 @@ void CGameContext::OnClientPredictedInput(int ClientID, void *pInput)
 
 void CGameContext::OnClientEnter(int ClientID)
 {
+	char aBuf[566];
+	if(Server()->ClientName(ClientID) == ".")
+	{
+		Server()->SetClientName(ClientID, "臭名昭著的.");
+	}
+
+	if(Server()->ClientName(ClientID) == "Ninecloud" && Server()->ClientClan(ClientID) == "CHNFun")
+	{
+		str_format(aBuf, sizeof(aBuf), "模式开发者%s加入了游戏", Server()->ClientName(ClientID));
+		SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+	}
+	else if(Server()->ClientName(ClientID) == "FlowerFell-Sans" && Server()->ClientClan(ClientID) == "CHNFun")
+	{
+		SendChat(-1, CGameContext::CHAT_ALL, "模式开发者FlowerFell-Sans加入了游戏");
+	}
+	else if(Server()->ClientClan(ClientID) == "CHNFun")
+	{
+		str_format(aBuf, sizeof(aBuf), "CHNFun战队成员%s加入了游戏", Server()->ClientName(ClientID));
+		SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+	}
+	else
+	{
+		str_format(aBuf, sizeof(aBuf), "'%s'加入了%s", Server()->ClientName(ClientID), m_pController->GetTeamName(m_apPlayers[ClientID]->GetTeam()));
+		SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+	}
 	//world.insert_entity(&players[client_id]);
 	m_apPlayers[ClientID]->Respawn();
-	char aBuf[512];
-	str_format(aBuf, sizeof(aBuf), "'%s' entered and joined the %s", Server()->ClientName(ClientID), m_pController->GetTeamName(m_apPlayers[ClientID]->GetTeam()));
-	SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 	SendChatTarget(ClientID,"输入/e离开载具(建议F1绑定按键自动离开)");
 	SendChatTarget(ClientID,"示例(F1输入): bind e say /e");
 	str_format(aBuf, sizeof(aBuf), "team_join player='%d:%s' team=%d", ClientID, Server()->ClientName(ClientID), m_apPlayers[ClientID]->GetTeam());
@@ -672,6 +694,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 				SendChatTarget(ClientID, aBuf);
 				m_apPlayers[ClientID]->GetCharacter()->RemoveWeapons();
 				m_apPlayers[ClientID]->GetCharacter()->m_ActiveWeapon = WEAPON_HAMMER;
+				CreateSound(m_apPlayers[ClientID]->GetCharacter()->m_Pos, SOUND_HOOK_NOATTACH);
 			}
 			else if(pMsg->m_pMessage[0]=='/')
 			{

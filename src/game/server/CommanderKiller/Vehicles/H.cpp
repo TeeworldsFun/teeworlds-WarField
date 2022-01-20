@@ -10,30 +10,50 @@ CH::CH(CGameWorld *pGameWorld, vec2 Pos)
 {
 	m_StartPos = Pos;
 
-    for(int i = 0; i < 5; i++)
+    for(int i = 0; i < 8; i++)
     {
         m_aIDs[i] = Server()->SnapNewID();
         switch(i)
         {
         case 0:
-            m_aX[i] = -16;
+            m_aX[i] = -42;
             m_aY[i] = 0;
             m_aSubType[i] = POWERUP_HEALTH;
             break;
         case 1:
-            m_aX[i] = +16;
+            m_aX[i] = +42;
             m_aY[i] = 0;
             m_aSubType[i] = POWERUP_HEALTH;
             break;
         case 2:
             m_aX[i] = 0;
-            m_aY[i] = -16;
-            m_aSubType[i] = POWERUP_HEALTH;
+            m_aY[i] = -45;
+            m_aSubType[i] = POWERUP_ARMOR;
             break;
         case 3:
+            m_aX[i] = 0;
+            m_aY[i] = -75;
+            m_aSubType[i] = POWERUP_ARMOR;
+            break;
+        case 4:
+            m_aX[i] = +32;
+            m_aY[i] = -96;
+            m_aSubType[i] = POWERUP_ARMOR;
+            break;
+        case 5:
+            m_aX[i] = -32;
+            m_aY[i] = -96;
+            m_aSubType[i] = POWERUP_ARMOR;
+            break;
+        case 6:
             m_aX[i] = -64;
-            m_aY[i] = 0;
-            m_aSubType[i] = POWERUP_HEALTH;
+            m_aY[i] = -96;
+            m_aSubType[i] = POWERUP_ARMOR;
+            break;
+        case 7:
+            m_aX[i] = +64;
+            m_aY[i] = -96;
+            m_aSubType[i] = POWERUP_ARMOR;
             break;
         }
     }
@@ -87,6 +107,7 @@ void CH::SearchChar()
         m_pH->GetPlayer()->SetH(true);
         m_pH->GetPlayer()->OnH = true;
         m_ExitTick = 200;
+        GameServer()->CreateSound(m_Pos, SOUND_PICKUP_GRENADE);
         break;
     }
 }
@@ -217,9 +238,9 @@ void CH::MoveBox(vec2 *pInoutPos, vec2 *pInoutVel, vec2 Size, float Elasticity)
 
 void CH::Snap(int SnappingClient)
 {
-    CNetObj_Pickup *pObj[5];
+    CNetObj_Pickup *pObj[8];
 
-    for(int i = 0; i < 5; i++)
+    for(int i = 0; i < 8; i++)
     {
         pObj[i] = static_cast<CNetObj_Pickup *>(Server()->SnapNewItem(NETOBJTYPE_PICKUP, m_aIDs[i], sizeof(CNetObj_Pickup)));
 	    

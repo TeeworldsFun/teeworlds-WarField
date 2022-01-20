@@ -105,19 +105,11 @@ void CPlayer::Tick()
 	if(Server()->Tick()%100 == 0)
 	{	
 		if(OnH)
-			GameServer()->SendBroadcast("载具: 直升机", m_ClientID);
+			GameServer()->SendBroadcast("\n\n\n\n\n\n\n\n\n\n载具: 直升机", m_ClientID);
 		else if(OnCar)
-			GameServer()->SendBroadcast("载具: 车", m_ClientID);
+			GameServer()->SendBroadcast("\n\n\n\n\n\n\n\n\n\n载具: 车", m_ClientID);
 		else if(OnTank)
-			GameServer()->SendBroadcast("载具: 坦克", m_ClientID);
-	}
-
-	if(Server()->Tick()%100 == 0 && OnHealth)
-	{
-		if(GetCharacter()->m_Health < 10)
-			GetCharacter()->m_Health++;
-		else if(GetCharacter()->m_Armor < 10)
-			GetCharacter()->m_Armor++;
+			GameServer()->SendBroadcast("\n\n\n\n\n\n\n\n\n\n载具: 坦克", m_ClientID);
 	}
 
 #ifdef CONF_DEBUG
@@ -183,6 +175,7 @@ void CPlayer::Tick()
  	}
 
 	HandleTuningParams();
+
 }
 
 void CPlayer::PostTick()

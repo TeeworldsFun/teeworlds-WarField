@@ -97,6 +97,7 @@ void CTank::SearchChar()
         m_pTank->GetPlayer()->SetTank(true);
         m_pTank->GetPlayer()->OnTank = true;
         m_ExitTick = 200;
+        GameServer()->CreateSound(m_Pos, SOUND_PICKUP_GRENADE);
         break;
     }
 }

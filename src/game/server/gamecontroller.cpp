@@ -206,6 +206,12 @@ void IGameController::EndRound()
 	if(m_Warmup) // game can't end when we are running warmup
 		return;
 
+	for(int i; i<MAX_CLIENTS; i++)
+	{
+		GameServer()->m_apPlayers[i]->SetCars(false);
+		GameServer()->m_apPlayers[i]->SetTank(false);
+		GameServer()->m_apPlayers[i]->SetH(false);
+	}
 	GameServer()->m_World.m_Paused = true;
 	m_GameOverTick = Server()->Tick();
 	m_SuddenDeath = 0;
@@ -221,17 +227,17 @@ const char *IGameController::GetTeamName(int Team)
 	if(IsTeamplay())
 	{
 		if(Team == TEAM_RED)
-			return "red team";
+			return "突进方";
 		else if(Team == TEAM_BLUE)
-			return "blue team";
+			return "保守派";
 	}
 	else
 	{
 		if(Team == 0)
-			return "game";
+			return "资源战争";
 	}
 
-	return "spectators";
+	return "死亡女神";
 }
 
 static bool IsSeparator(char c) { return c == ';' || c == ' ' || c == ',' || c == '\t'; }

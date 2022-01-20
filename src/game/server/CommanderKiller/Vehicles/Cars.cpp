@@ -82,6 +82,7 @@ void CCar::SearchChar()
         m_pCar->GetPlayer()->SetCars(true);
         m_pCar->GetPlayer()->OnCar = true;
         m_ExitTick = 200;
+        GameServer()->CreateSound(m_Pos, SOUND_PICKUP_GRENADE);
         break;
     }
 }

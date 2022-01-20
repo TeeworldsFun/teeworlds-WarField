@@ -75,9 +75,6 @@ public:
 
 	bool IsAlive() const { return m_Alive; }
 	class CPlayer *GetPlayer() { return m_pPlayer; }
-
-	int m_Health;
-	int m_Armor;
 	
 	int m_ActiveWeapon;
 private:
@@ -85,6 +82,8 @@ private:
 	class CPlayer *m_pPlayer;
 
 	bool m_Alive;
+	int m_Health;
+	int m_Armor;
 
 	// weapon info
 	CEntity *m_apHitObjects[10];

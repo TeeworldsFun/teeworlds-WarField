@@ -17,10 +17,10 @@
 static const char GAME_RELEASE_VERSION[8] = {'0', '.', '6', '.', '4', 0};
 
 #define MOD_NAME "指挥官杀手"
-#define MOD_VERSION "0.5"
-#define MOD_AUTHORS "Ninecloud && FlowerFell-Sans"
-#define MOD_CREDITS "Ninecloud"
-#define MOD_THANKS "Necropotame, BattleField, Teeworlds团队, DDNet团队, MMORPG团队, 天上的星星, Pikotee, Neox76, 中国活动服, TsFreddie, Rice, Moker"
-#define MOD_SOURCES "https://github.com/teeworldsCNFun/teeworlds-CK"
+#define MOD_VERSION "1.0"
+#define MOD_AUTHORS "Ninecloud & FlowerFell-Sans\n"
+#define MOD_CREDITS "Ninecloud\n"
+#define MOD_THANKS "Necropotame, BattleField, Teeworlds团队, DDNet团队, MMORPG团队, 天上的星星, Pikotee, Neox76, 中国活动服, TsFreddie, Rice, Moker\n"
+#define MOD_SOURCES "https://github.com/teeworldsCNFun/teeworlds-CK\n"
 #endif
 #endif

@@ -435,7 +435,7 @@ void CCharacter::FireWeapon()
 				ProjStartPos,
 				Direction,
 				(int)(Server()->TickSpeed()*GameServer()->Tuning()->m_GrenadeLifetime),
-				4, true, 2, SOUND_GRENADE_EXPLODE, WEAPON_GRENADE);
+				6, true, 2, SOUND_GRENADE_EXPLODE, WEAPON_GRENADE);
 
 			GameServer()->CreateSound(m_Pos, SOUND_GRENADE_FIRE);
 		} break;
@@ -472,6 +472,26 @@ void CCharacter::FireWeapon()
 				GameServer()->CreateSound(m_Pos, SOUND_HIT);
 			}
 
+			if(m_pPlayer->OnH && m_Input.m_Jump)
+			{
+				int ShotSpread = 6;
+
+					for(int i = -ShotSpread; i <= ShotSpread; ++i)
+					{
+						float Spreading[] = {-0.185f, -0.070f, 0, 0.070f, 0.185f};
+						float a = GetAngle(Direction);
+						a += Spreading[i+2];
+						float v = 1-(absolute(i)/(float)ShotSpread);
+						float Speed = mix((float)GameServer()->Tuning()->m_ShotgunSpeeddiff, 1.0f, v);
+						CProjectile *pProj = new CProjectile(GameWorld(), WEAPON_SHOTGUN,
+							m_pPlayer->GetCID(),
+							ProjStartPos,
+							vec2(cosf(a), sinf(a))*Speed,
+							(int)(Server()->TickSpeed()*GameServer()->Tuning()->m_ShotgunLifetime),
+							1, true, 1, -1, WEAPON_SHOTGUN);
+					}
+			}
+
 		} break;
 
 	}
@@ -486,7 +506,7 @@ void CCharacter::FireWeapon()
 	else if(m_ActiveWeapon == WEAPON_SUPGUN)
 		m_ReloadTimer = 30 * Server()->TickSpeed() / 1000;
 	else if(m_ActiveWeapon == WEAPON_TANKBOMB)
-		m_ReloadTimer = 20 * Server()->TickSpeed() / 1000;
+		m_ReloadTimer = 1200 * Server()->TickSpeed() / 1000;
 	else
 		m_ReloadTimer = 1 * Server()->TickSpeed() / 1000;
 }
@@ -660,13 +680,30 @@ void CCharacter::Tick()
 	{
 		m_aWeapons[WEAPON_TANKBOMB].m_Ammo = 99999999;
 	}
-	if(m_pPlayer->OnTank == 1)
-		m_Core.m_Jumped &= ~2;
-	else if(m_pPlayer->OnH == 1 && m_Input.m_Hook)
+	
+	if(m_pPlayer->OnTank == 1 && m_Input.m_Jump)
 	{
-		m_Core.m_Vel.y = -4;
-		
+		m_Core.m_Jumped &= ~2;
 	}
+	
+	if(m_pPlayer->OnH == 1 && m_Input.m_Hook)
+	{
+		m_Input.m_Hook = false;
+		m_Core.m_Vel.y = -4;
+		if(Server()->Tick()%2 == 0)	
+			GameServer()->CreateSound(m_Pos, SOUND_WEAPON_SWITCH);
+	}
+	
+	if(m_pPlayer->OnWater && m_Input.m_Jump)
+	{
+		m_Core.m_Vel.y = +5;
+	}
+
+	if(m_pPlayer->OnTank && m_Input.m_Hook)
+	{
+		m_ActiveWeapon = WEAPON_TANKBOMB;
+	}
+
 	if(m_pPlayer->m_ForceBalanced)
 	{
 		char Buf[128];
@@ -675,6 +712,7 @@ void CCharacter::Tick()
 
 		m_pPlayer->m_ForceBalanced = false;
 	}
+	FireWeapon();
 
 	m_Core.m_Input = m_Input;
 	m_Core.Tick(true, m_pPlayer->GetNextTuningParams());

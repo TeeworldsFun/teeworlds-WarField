@@ -31,11 +31,11 @@ private:
 
 	vec2 m_Vel;
 
-    int m_aX[5];
-    int m_aY[5];
-	int m_aSubType[5];
+    int m_aX[8];
+    int m_aY[8];
+	int m_aSubType[8];
 
-    int m_aIDs[5];
+    int m_aIDs[8];
 };
 
 #endif
