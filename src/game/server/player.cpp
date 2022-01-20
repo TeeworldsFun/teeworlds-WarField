@@ -358,6 +358,9 @@ void CPlayer::Respawn()
 
 void CPlayer::SetTeam(int Team, bool DoChatMsg)
 {
+	if(Team == TEAM_SPECTATORS)
+		return;
+	
 	// clamp the team
 	Team = GameServer()->m_pController->ClampTeam(Team);
 	if(m_Team == Team)
