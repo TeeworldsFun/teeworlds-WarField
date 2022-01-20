@@ -271,9 +271,9 @@ void CPlayer::OnDisconnect(const char *pReason)
 	{
 		char aBuf[512];
 		if(pReason && *pReason)
-			str_format(aBuf, sizeof(aBuf), "'%s' has left the game (%s)", Server()->ClientName(m_ClientID), pReason);
+			str_format(aBuf, sizeof(aBuf), "'%s' 暂时离开了... (%s)", Server()->ClientName(m_ClientID), pReason);
 		else
-			str_format(aBuf, sizeof(aBuf), "'%s' has left the game", Server()->ClientName(m_ClientID));
+			str_format(aBuf, sizeof(aBuf), "'%s' 暂时离开了...", Server()->ClientName(m_ClientID));
 		GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 
 		str_format(aBuf, sizeof(aBuf), "leave player='%d:%s'", m_ClientID, Server()->ClientName(m_ClientID));
@@ -362,7 +362,7 @@ void CPlayer::SetTeam(int Team, bool DoChatMsg)
 	char aBuf[512];
 	if(DoChatMsg)
 	{
-		str_format(aBuf, sizeof(aBuf), "'%s' joined the %s", Server()->ClientName(m_ClientID), GameServer()->m_pController->GetTeamName(Team));
+		str_format(aBuf, sizeof(aBuf), "'%s'加入了%s", Server()->ClientName(m_ClientID), GameServer()->m_pController->GetTeamName(Team));
 		GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 	}
 

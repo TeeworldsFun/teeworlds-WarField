@@ -526,24 +526,33 @@ void CGameContext::OnClientPredictedInput(int ClientID, void *pInput)
 void CGameContext::OnClientEnter(int ClientID)
 {
 	char aBuf[566];
-	if(Server()->ClientName(ClientID) == ".")
+	char nick [] = "TsFreddie";
+	char nick1 [] = "Ninecloud";
+	char nick2 [] = "FlowerFell-Sans";
+	char clan [] = "CHNFun";
+	char ban [] = ".";
+	if(str_comp(Server()->ClientName(ClientID), ban) == 0)
 	{
-		Server()->SetClientName(ClientID, "臭名昭著的.");
+		Server()->SetClientName(ClientID, "臭名昭著");
 	}
 
-	if(Server()->ClientName(ClientID) == "Ninecloud" && Server()->ClientClan(ClientID) == "CHNFun")
+	if (str_comp(Server()->ClientName(ClientID), nick) == 0)
 	{
-		str_format(aBuf, sizeof(aBuf), "模式开发者%s加入了游戏", Server()->ClientName(ClientID));
+		str_format(aBuf, sizeof(aBuf), "Happy '%s' entered and joined the %s", Server()->ClientName(ClientID), m_pController->GetTeamName(m_apPlayers[ClientID]->GetTeam()));
+	}
+	else if(str_comp(Server()->ClientName(ClientID), nick1) == 0 && str_comp(Server()->ClientClan(ClientID), clan) == 0)
+	{
+		str_format(aBuf, sizeof(aBuf), "模式开发者Ninecloud加入了游戏");
 		SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 	}
-	else if(Server()->ClientName(ClientID) == "FlowerFell-Sans" && Server()->ClientClan(ClientID) == "CHNFun")
+	else if(str_comp(Server()->ClientName(ClientID), nick2) == 0 && str_comp(Server()->ClientClan(ClientID), clan) == 0)
 	{
 		SendChat(-1, CGameContext::CHAT_ALL, "模式开发者FlowerFell-Sans加入了游戏");
 	}
-	else if(Server()->ClientClan(ClientID) == "CHNFun")
+	else if(str_comp(Server()->ClientClan(ClientID), clan) == 0)
 	{
-		str_format(aBuf, sizeof(aBuf), "CHNFun战队成员%s加入了游戏", Server()->ClientName(ClientID));
-		SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+		str_format(aBuf, sizeof(aBuf), "CHNFun战队成员'%s'加入了游戏", Server()->ClientName(ClientID));
+		SendChat(-1, CGameContext::CHAT_ALL, aBuf);	
 	}
 	else
 	{
@@ -552,8 +561,11 @@ void CGameContext::OnClientEnter(int ClientID)
 	}
 	//world.insert_entity(&players[client_id]);
 	m_apPlayers[ClientID]->Respawn();
-	SendChatTarget(ClientID,"输入/e离开载具(建议F1绑定按键自动离开)");
-	SendChatTarget(ClientID,"示例(F1输入): bind e say /e");
+	SendChatTarget(ClientID, "输入/e离开载具(建议F1绑定按键自动离开)");
+	SendChatTarget(ClientID, "--------------------------------");
+	SendChatTarget(ClientID, "示例(F1输入): bind e say /e");
+	SendChatTarget(ClientID, "--------------------------------");
+	SendChatTarget(ClientID, "空格键可以在水里下潜");
 	str_format(aBuf, sizeof(aBuf), "team_join player='%d:%s' team=%d", ClientID, Server()->ClientName(ClientID), m_apPlayers[ClientID]->GetTeam());
 	Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "game", aBuf);
 

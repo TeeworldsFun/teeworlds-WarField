@@ -159,7 +159,7 @@ void CGameWorld::Tick()
 	if(!m_Paused)
 	{
 		if(GameServer()->m_pController->IsForceBalanced())
-			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, "Teams have been balanced");
+			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, "命运的齿轮开始转动....");
 		// update all objects
 		for(int i = 0; i < NUM_ENTTYPES; i++)
 			for(CEntity *pEnt = m_apFirstEntityTypes[i]; pEnt; )
