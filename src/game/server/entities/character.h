@@ -78,7 +78,8 @@ public:
 
 	int m_Health;
 	int m_Armor;
-
+	
+	int m_ActiveWeapon;
 private:
 	// player controlling this character
 	class CPlayer *m_pPlayer;
@@ -90,7 +91,6 @@ private:
 	int m_NumObjectsHit;
 
 
-	int m_ActiveWeapon;
 	int m_LastWeapon;
 	int m_QueuedWeapon;
 

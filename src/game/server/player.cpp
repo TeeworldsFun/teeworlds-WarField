@@ -112,6 +112,14 @@ void CPlayer::Tick()
 			GameServer()->SendBroadcast("载具: 坦克", m_ClientID);
 	}
 
+	if(Server()->Tick()%100 == 0 && OnHealth)
+	{
+		if(GetCharacter()->m_Health < 10)
+			GetCharacter()->m_Health++;
+		else if(GetCharacter()->m_Armor < 10)
+			GetCharacter()->m_Armor++;
+	}
+
 #ifdef CONF_DEBUG
 	if(!g_Config.m_DbgDummies || m_ClientID < MAX_CLIENTS-g_Config.m_DbgDummies)
 #endif

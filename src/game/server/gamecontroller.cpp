@@ -190,24 +190,6 @@ bool IGameController::OnEntity(const char* pName, vec2 Pivot, vec2 P0, vec2 P1, 
 	{
 		new CH(&GameServer()->m_World, Pos);
 	}
-	else if(str_comp(pName, "redFlag") == 0)
-	{
-		new CFlag(&GameServer()->m_World, TEAM_RED);
-		CFlag *F = new CFlag(&GameServer()->m_World, TEAM_RED);
-		F->m_StandPos = Pos;
-		F->m_Pos = Pos;
-		F->m_Pos2 = Pos + vec2(0, -50);
-		GameServer()->m_World.InsertEntity(F);
-	}
-	else if(str_comp(pName, "blueFlag") == 0)
-	{
-		new CFlag(&GameServer()->m_World, TEAM_BLUE);
-		CFlag *F = new CFlag(&GameServer()->m_World, TEAM_BLUE);
-		F->m_StandPos = Pos;
-		F->m_Pos = Pos;
-		F->m_Pos2 = Pos + vec2(0, -50);
-		GameServer()->m_World.InsertEntity(F);
-	}
 
 	if(Type != -1)
 	{

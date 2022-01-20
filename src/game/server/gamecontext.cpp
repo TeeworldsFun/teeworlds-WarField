@@ -671,6 +671,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 				m_apPlayers[ClientID]->OnH = false;
 				SendChatTarget(ClientID, aBuf);
 				m_apPlayers[ClientID]->GetCharacter()->RemoveWeapons();
+				m_apPlayers[ClientID]->GetCharacter()->m_ActiveWeapon = WEAPON_HAMMER;
 			}
 			else if(pMsg->m_pMessage[0]=='/')
 			{
@@ -1550,6 +1551,7 @@ void CGameContext::OnConsoleInit()
 	Console()->Register("vote", "r", CFGFLAG_SERVER, ConVote, this, "Force a vote to yes/no");
 	
 	Console()->Register("about", "", CFGFLAG_CHAT, ConAbout, this, "Show information about the mod");
+	Console()->Register("help", "", CFGFLAG_CHAT, ConAbout, this, "Show information about the mod");
 
 	Console()->Chain("sv_motd", ConchainSpecialMotdupdate, this);
 }
